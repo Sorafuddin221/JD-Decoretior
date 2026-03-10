@@ -28,6 +28,8 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
     const [activeTab, setActiveTab] = useState('reviews');
     const [selectedColor, setSelectedColor] = useState(''); // New state
     const [mounted, setMounted] = useState(false); // New state for hydration fix
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const { loading, error, product: reduxProduct, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
     const { loading: cartLoading, error: cartError, success, message } = useSelector((state) => state.cart);
@@ -93,11 +95,28 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
             console.error("Attempted to add to cart without valid product or product ID.");
             return;
         }
+
+        if (!startDate || !endDate) {
+            toast.error('Please select Start and End dates for rental.', { position: 'top-center', autoClose: 3000 });
+            return;
+        }
+
+        if (new Date(startDate) > new Date(endDate)) {
+            toast.error('End date cannot be before Start date.', { position: 'top-center', autoClose: 3000 });
+            return;
+        }
+
         if (product.colors && product.colors.length > 0 && !selectedColor) {
             toast.error('Please select a color for the product.', { position: 'top-center', autoClose: 3000 });
             return;
         }
-        dispatch(addItemsToCart({ id: product._id, quantity, color: selectedColor }));
+        dispatch(addItemsToCart({ 
+            id: product._id, 
+            quantity, 
+            color: selectedColor,
+            startDate,
+            endDate
+        }));
     };
 
     const handleReviewSubmit = (e) => {
@@ -237,12 +256,17 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
                             {product.offeredPrice ? (
                                 <>
                                     <span className="original-price">TK {product.price}</span>
-                                    <span className="offered-price">TK {product.offeredPrice}</span>
+                                    <span className="offered-price">TK {product.offeredPrice} / Day</span>
                                 </>
                             ) : (
-                                <strong>Price: TK {product.price}</strong>
+                                <strong>Price: TK {product.price} / Day</strong>
                             )}
                         </p>
+                        {product.securityDeposit > 0 && (
+                            <p className="security-deposit">
+                                <strong>Security Deposit: TK {product.securityDeposit}</strong> (Refundable)
+                            </p>
+                        )}
                         <div className="product-rating">
                             <MuiRating
                                 value={product.ratings}
@@ -276,12 +300,33 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
                             </div>
                         )}
 
-                        {product.stock > 0 && (<> <div className="quantity-controls">
-                            <span className="quantity-label">quantity</span>
-                            <button className="quantity-button" onClick={decreaseQuantity}>-</button>
-                            <input type="text" value={quantity} readOnly className="quantity-value" />
-                            <button onClick={increaseQuantity} className="quantity-button">+</button>
-                        </div>
+                        {product.stock > 0 && (<> 
+                            <div className="rental-dates">
+                                <div className="date-input">
+                                    <label>Start Date:</label>
+                                    <input 
+                                        type="date" 
+                                        value={startDate} 
+                                        onChange={(e) => setStartDate(e.target.value)}
+                                        min={new Date().toISOString().split('T')[0]}
+                                    />
+                                </div>
+                                <div className="date-input">
+                                    <label>End Date:</label>
+                                    <input 
+                                        type="date" 
+                                        value={endDate} 
+                                        onChange={(e) => setEndDate(e.target.value)}
+                                        min={startDate || new Date().toISOString().split('T')[0]}
+                                    />
+                                </div>
+                            </div>
+                            <div className="quantity-controls">
+                                <span className="quantity-label">quantity</span>
+                                <button className="quantity-button" onClick={decreaseQuantity}>-</button>
+                                <input type="text" value={quantity} readOnly className="quantity-value" />
+                                <button onClick={increaseQuantity} className="quantity-button">+</button>
+                            </div>
                             <button className="add-to-cart-btn" onClick={addToCart} disabled={cartLoading} >{cartLoading ? 'Adding' : ' Add to card'}</button>
                         </>)}
                     </div>

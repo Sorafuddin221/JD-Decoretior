@@ -4,7 +4,7 @@ import api from "@/utils/api";
 
 //itme add card
 
-export const addItemsToCart=createAsyncThunk('cart/addItemsToCart',async({id,quantity,color},{rejectWithValue})=>{
+export const addItemsToCart=createAsyncThunk('cart/addItemsToCart',async({id,quantity,color,startDate,endDate},{rejectWithValue})=>{
 try{
     const {data}=await api.get(`/api/product/${id}`);
     if (!data.product) {
@@ -20,8 +20,11 @@ try{
         price: priceToUse,
         image: imageToUse,
         stock:data.product.stock,
+        securityDeposit: data.product.securityDeposit || 0,
         quantity,
-        color
+        color,
+        startDate,
+        endDate
     };
     return cartItem;
 
@@ -81,9 +84,9 @@ const cartSlice=createSlice({
         .addCase(addItemsToCart.fulfilled,(state,action)=>{
             const item=action.payload
             
-            // Find an existing item that matches both product ID and color
+            // Find an existing item that matches product ID, color, AND rental dates
             const existingItem = state.cartItems.find(
-                (i) => i.product === item.product && i.color === item.color
+                (i) => i.product === item.product && i.color === item.color && i.startDate === item.startDate && i.endDate === item.endDate
             );
 
             if(existingItem){

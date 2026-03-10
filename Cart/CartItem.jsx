@@ -9,6 +9,18 @@ function CartItem({ item }) {
     const { success, loading, error, message } = useSelector(state => state.cart);
     const dispatch = useDispatch();
 
+    const calculateDays = (start, end) => {
+        if (!start || !end) return 1;
+        const s = new Date(start);
+        const e = new Date(end);
+        const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
+        return diff > 0 ? diff : 1;
+    };
+
+    const totalDays = calculateDays(item.startDate, item.endDate);
+    const securityDepositTotal = (item.securityDeposit || 0) * item.quantity;
+    const rentalTotal = item.price * item.quantity * totalDays;
+
     const handleQuantityChange = (newQuantity) => {
         if (newQuantity < 1) {
             toast.error('Quantity cannot be less than 1', { position: 'top-center', autoClose: 3000 });
@@ -19,7 +31,13 @@ function CartItem({ item }) {
             return;
         }
         // Dispatch the action to update the quantity in the Redux store
-        dispatch(addItemsToCart({ id: item.product, quantity: newQuantity, color: item.color }));
+        dispatch(addItemsToCart({ 
+            id: item.product, 
+            quantity: newQuantity, 
+            color: item.color,
+            startDate: item.startDate,
+            endDate: item.endDate
+        }));
     };
 
     const decreaseQuantity = () => {
@@ -64,7 +82,13 @@ function CartItem({ item }) {
                 <img src={item.image} alt={item.name} className="item-image" />
                 <div className="item-details">
                     <h3 className="item-name">{item.name}</h3>
-                    <p className="item-price"><strong>Price :</strong>TK {item.price.toFixed(1)}</p>
+                    <p className="item-price"><strong>Rate :</strong>TK {item.price.toFixed(1)} / Day</p>
+                    {item.startDate && item.endDate && (
+                        <p className="item-dates"><strong>Dates :</strong> {item.startDate} to {item.endDate} ({totalDays} Days)</p>
+                    )}
+                    {item.securityDeposit > 0 && (
+                        <p className="item-deposit"><strong>Deposit :</strong> TK {securityDepositTotal.toFixed(1)} (Refundable)</p>
+                    )}
                     {item.color && <p className="item-color"><strong>Color :</strong> {item.color}</p>}
                     <p className="item-quantity"><strong>Quantity :</strong>{item.quantity}</p>
                 </div>
@@ -75,7 +99,7 @@ function CartItem({ item }) {
                 <button className="quantity-button-increase-btn" onClick={increaseQuantity} disabled={loading}>+</button>
             </div>
             <div className="item-total">
-                <span className="item-total-price">TK {(item.price * item.quantity).toFixed(1)}</span>
+                <span className="item-total-price">TK {(rentalTotal + securityDepositTotal).toFixed(1)}</span>
             </div>
             <div className="item-actions">
                 <button className="remove-item-btn" onClick={handleRemove} disabled={loading}>Remove</button>

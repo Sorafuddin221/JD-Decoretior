@@ -18,6 +18,14 @@ price:{
 offeredPrice: {
     type: Number,
 },
+securityDeposit: {
+    type: Number,
+    default: 0
+},
+isRentable: {
+    type: Boolean,
+    default: true
+},
 ratings:{
     type:Number,
     default:0

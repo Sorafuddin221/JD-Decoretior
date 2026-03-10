@@ -43,7 +43,22 @@ function OrderConfirmPage() {
     }, []);
 
 
-    const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const calculateDays = (start, end) => {
+        if (!start || !end) return 1;
+        const s = new Date(start);
+        const e = new Date(end);
+        const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        return diff > 0 ? diff : 1;
+    };
+
+    const subtotal = cartItems.reduce((acc, item) => {
+        const days = calculateDays(item.startDate, item.endDate);
+        return acc + (item.price * item.quantity * days);
+    }, 0);
+
+    const securityDepositTotal = cartItems.reduce((acc, item) => {
+        return acc + ((item.securityDeposit || 0) * item.quantity);
+    }, 0);
     
     // Dynamic Tax Calculation
     const tax = subtotal * (paymentSettings.taxPercentage / 100); 
@@ -54,12 +69,14 @@ function OrderConfirmPage() {
             ? paymentSettings.insideDhakaShippingCost 
             : paymentSettings.outsideDhakaShippingCost;
 
-    const total = subtotal + tax + shippingCharges;
+    const total = subtotal + securityDepositTotal + tax + shippingCharges;
 
     const router = useRouter();
     const dispatch = useDispatch();
 
     const proceedToPayment = async () => {
+        // Assume all items share the same rental period for the global order dates
+        const firstItem = cartItems[0] || {};
         const orderData = {
             shippingInfo: {
                 ...shippingInfo,
@@ -73,8 +90,12 @@ function OrderConfirmPage() {
                 quantity: item.quantity,
                 Image: item.image,
                 product: item.product,
-                color: item.color, // Add color here
+                color: item.color,
             })),
+            startDate: firstItem.startDate,
+            endDate: firstItem.endDate,
+            totalDays: calculateDays(firstItem.startDate, firstItem.endDate),
+            securityDepositTotal: securityDepositTotal,
             itemPrice: subtotal,
             taxPrice: tax,
             shippingPrice: shippingCharges,
@@ -111,16 +132,32 @@ function OrderConfirmPage() {
                             <tr>
                                 <th>Image</th>
                                 <th>Product Name</th>
-                                <th>Price</th>
-                                <th>Color</th>
+                                <th>Price/Day</th>
+                                <th>Dates</th>
+                                <th>Days</th>
+                                <th>Deposit</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {cartItems.map((item) => (
-                                <tr key={item.product}><td><img src={item.image} alt={item.name} className='item-image' /></td><td>{item.name}</td><td>{item.price}</td><td>{item.color || 'N/A'}</td><td>{item.quantity}</td><td>TK {(item.quantity * item.price).toFixed(2)}</td></tr>
-                            ))}
+                            {cartItems.map((item) => {
+                                const days = calculateDays(item.startDate, item.endDate);
+                                const deposit = (item.securityDeposit || 0) * item.quantity;
+                                const itemRentalTotal = item.price * item.quantity * days;
+                                return (
+                                    <tr key={item.product}>
+                                        <td><img src={item.image} alt={item.name} className='item-image' /></td>
+                                        <td>{item.name}</td>
+                                        <td>{item.price}</td>
+                                        <td>{item.startDate} to {item.endDate}</td>
+                                        <td>{days}</td>
+                                        <td>{deposit.toFixed(2)}</td>
+                                        <td>{item.quantity}</td>
+                                        <td>TK {(itemRentalTotal + deposit).toFixed(2)}</td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
 
                     </table>
@@ -128,7 +165,8 @@ function OrderConfirmPage() {
                         <caption>Order Summary</caption>
                         <thead>
                             <tr>
-                                <th>Subtotal</th>
+                                <th>Rental Subtotal</th>
+                                <th>Security Deposit</th>
                                 <th>Shipping Charge</th>
                                 <th>Tax</th>
                                 <th>Total</th>
@@ -137,11 +175,12 @@ function OrderConfirmPage() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="4">Loading...</td>
+                                    <td colSpan="5">Loading...</td>
                                 </tr>
                             ) : (
                                 <tr>
                                     <td>TK {subtotal.toFixed(2)}</td>
+                                    <td>TK {securityDepositTotal.toFixed(2)}</td>
                                     <td>TK {shippingCharges.toFixed(2)}</td>
                                     <td>TK {tax.toFixed(2)}</td>
                                     <td>TK {total.toFixed(2)}</td>

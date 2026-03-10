@@ -29,7 +29,11 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
         orderItems = [],
         paymentInfo = {},
         orderStatus,
-        totalPrice
+        totalPrice,
+        startDate,
+        endDate,
+        totalDays,
+        securityDepositTotal
     } = adminOrder;
 
     const paymentStatus = paymentInfo.status === 'succeeded' ? 'Paid' : (paymentInfo.status || 'Not Paid');
@@ -144,6 +148,9 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
                     <p><strong>Shipping Address :</strong>{shippingInfo.address},{shippingInfo.city},{shippingInfo.state }
                         {shippingInfo.Country},{shippingInfo.pinCode}</p>
                     <p><strong>Phone :</strong>{shippingInfo.phoneNo}</p>
+                    <p><strong>Rental Period :</strong> {startDate ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}` : "N/A"}</p>
+                    <p><strong>Total Days :</strong> {totalDays || "N/A"}</p>
+                    <p><strong>Security Deposit :</strong> TK {securityDepositTotal || 0} (Refundable)</p>
                     <p><strong>Order Status :</strong>{finalOrderStatus}</p>
                     <p><strong>Payment Status :</strong>{paymentStatus}</p>
                     <p><strong>total Price :</strong>{totalPrice}</p>
@@ -161,8 +168,9 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Quantity</th>
-                                <th>Price</th>
+                                <th>Price/Day</th>
                                 <th>Color</th>
+                                <th>Total (Item)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -175,6 +183,7 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
                                     <td>{item.quantity}</td>
                                     <td>{item.price}/-</td>
                                     <td>{item.color || 'N/A'}</td>
+                                    <td>TK {(item.price * item.quantity * (totalDays || 1)).toFixed(2)}</td>
                                 </tr>
                             ))}
                         </tbody>

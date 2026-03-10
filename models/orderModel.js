@@ -60,6 +60,24 @@ const orderSchema=new mongoose.Schema({
         required:true,
         default:'processing'
     },
+    startDate: {
+        type: Date,
+        required: true,
+    },
+    endDate: {
+        type: Date,
+        required: true,
+    },
+    totalDays: {
+        type: Number,
+        required: true,
+        default: 1
+    },
+    securityDepositTotal: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     user:{
             type:mongoose.Schema.ObjectId,
             ref:"User",

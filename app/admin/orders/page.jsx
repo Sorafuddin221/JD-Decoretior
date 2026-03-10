@@ -90,9 +90,11 @@ function OrdersListPage() {
                                     <tr>
                                         <th>Sl No</th>
                                         <th>Order ID</th>
+                                        <th>Rental Dates</th>
+                                        <th>Days</th>
                                         <th>Status</th>
                                         <th>Total Price</th>
-                                        <th>Number Of Items</th>
+                                        <th>Items</th>
                                         <th>actions</th>
                                     </tr>
                                 </thead>
@@ -101,6 +103,14 @@ function OrdersListPage() {
                                         <tr key={order._id}>
                                             <td>{index + 1}</td>
                                             <td>{order._id}</td>
+                                            <td>
+                                                {order.startDate ? (
+                                                    <span className="rental-dates-admin">
+                                                        {new Date(order.startDate).toLocaleDateString()} - {new Date(order.endDate).toLocaleDateString()}
+                                                    </span>
+                                                ) : "N/A"}
+                                            </td>
+                                            <td>{order.totalDays || "N/A"}</td>
                                             <td className={`order-status ${order.orderStatus.toLowerCase()}`}>{order.orderStatus}</td>
                                             <td>{order.totalPrice.toFixed(2)}/-</td>
                                             <td>{order.orderItems.length}</td>

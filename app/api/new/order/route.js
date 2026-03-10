@@ -31,6 +31,10 @@ export const POST = handleAsyncError(async (request) => {
         shippingInfo,
         orderItems,
         paymentInfo,
+        startDate,
+        endDate,
+        totalDays,
+        securityDepositTotal,
     } = await request.json(); // Use request.json()
 
     // Fetch payment settings for calculations
@@ -47,7 +51,7 @@ export const POST = handleAsyncError(async (request) => {
             error.statusCode = 404;
             throw error;
         }
-        itemPrice += product.price * item.quantity; // Use actual product price from DB
+        itemPrice += (product.offeredPrice || product.price) * item.quantity * (totalDays || 1); // Use actual product price from DB and totalDays
     }
 
     const taxPrice = itemPrice * (taxPercentage / 100);
@@ -60,12 +64,16 @@ export const POST = handleAsyncError(async (request) => {
         shippingPrice = outsideDhakaShippingCost;
     }
 
-    const totalPrice = itemPrice + taxPrice + shippingPrice;
+    const totalPrice = itemPrice + (securityDepositTotal || 0) + taxPrice + shippingPrice;
 
     const order = await Order.create({
         shippingInfo,
         orderItems,
         paymentInfo,
+        startDate,
+        endDate,
+        totalDays: totalDays || 1,
+        securityDepositTotal: securityDepositTotal || 0,
         itemPrice,
         taxPrice,
         shippingPrice,

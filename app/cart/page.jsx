@@ -42,7 +42,22 @@ function CartPage() {
         fetchPaymentSettings();
     }, []);
 
-    const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const calculateDays = (start, end) => {
+        if (!start || !end) return 1;
+        const s = new Date(start);
+        const e = new Date(end);
+        const diff = Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        return diff > 0 ? diff : 1;
+    };
+
+    const subtotal = cartItems.reduce((acc, item) => {
+        const days = calculateDays(item.startDate, item.endDate);
+        return acc + (item.price * item.quantity * days);
+    }, 0);
+
+    const securityDepositTotal = cartItems.reduce((acc, item) => {
+        return acc + ((item.securityDeposit || 0) * item.quantity);
+    }, 0);
     
     // Dynamic Tax Calculation
     const tax = subtotal * (paymentSettings.taxPercentage / 100); 
@@ -55,7 +70,7 @@ function CartPage() {
                 ? paymentSettings.outsideDhakaShippingCost
                 : 0;
 
-    const total = subtotal + tax + currentShippingCharges;
+    const total = subtotal + securityDepositTotal + tax + currentShippingCharges;
 
     const router = useRouter();
     const checkoutHandler = () => {
@@ -138,8 +153,12 @@ function CartPage() {
                         <h3 className="price-summary-header">Price Summary</h3>
                         {loading ? <p>Loading...</p> : <>
                             <div className="summary-item">
-                                <p className="summary-label">Subtotal</p>
+                                <p className="summary-label">Rental Subtotal</p>
                                 <p className="summary-label">TK {subtotal.toFixed(2)}</p>
+                            </div>
+                            <div className="summary-item">
+                                <p className="summary-label">Security Deposit (Refundable)</p>
+                                <p className="summary-label">TK {securityDepositTotal.toFixed(2)}</p>
                             </div>
                             <div className="summary-item">
                                 <p className="summary-label">Tax ({paymentSettings.taxPercentage}%)</p>
