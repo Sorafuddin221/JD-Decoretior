@@ -7,6 +7,7 @@ import { loadUser } from '@/features/user/userSlice';
 // import Navbar from './Navbar';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import ChatBox from './ChatBox';
 
 export default function LayoutClient({ children, settings }) {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -53,6 +54,7 @@ export default function LayoutClient({ children, settings }) {
     <>
       <Navbar siteLogoUrl={settings?.siteLogoUrl} />
       {children}
+      <ChatBox />
       <Footer />
     </>
   );

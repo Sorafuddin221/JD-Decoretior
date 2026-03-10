@@ -5,7 +5,7 @@ import cartReducer from '../features/cart/cartSlice';
 import orderReducer from "../features/order/orderSlice";
 import adminReducer from "../features/admin/adminSlice";
 import categoryReducer from "../features/category/categorySlice";
-
+import chatReducer from "../features/chat/chatSlice";
 
 
 export const store=configureStore({
@@ -15,6 +15,7 @@ export const store=configureStore({
         cart:cartReducer,
         order:orderReducer,
         admin:adminReducer,
-        category: categoryReducer
+        category: categoryReducer,
+        chat: chatReducer
     }
 })
