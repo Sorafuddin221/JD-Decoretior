@@ -45,6 +45,8 @@ function MyOrdersPage() {
                         <thead>
                             <tr>
                                 <th>Order Id</th>
+                                <th>Rental Dates</th>
+                                <th>Days</th>
                                 <th>Items Count</th>
                                 <th> status</th>
                                 <th>Total Price</th>
@@ -56,6 +58,14 @@ function MyOrdersPage() {
                             {orders.map((order) => (
                                 <tr key={order._id}>
                                     <td>{order._id}</td>
+                                    <td>
+                                        {order.startDate ? (
+                                            <span className="rental-dates-badge">
+                                                {new Date(order.startDate).toLocaleDateString()} - {new Date(order.endDate).toLocaleDateString()}
+                                            </span>
+                                        ) : "N/A"}
+                                    </td>
+                                    <td>{order.totalDays || "N/A"}</td>
                                     <td>{order.orderItems.length}</td>
                                     <td>{order.orderStatus}</td>
                                     <td>{order.totalPrice}</td>

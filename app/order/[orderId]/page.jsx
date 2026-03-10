@@ -35,7 +35,11 @@ function OrderDetailsPage({ params }) {
         taxPrice,
         shippingPrice,
         itemPrice,
-        paidAt
+        paidAt,
+        startDate,
+        endDate,
+        totalDays,
+        securityDepositTotal
     } = order;
 
     const orderStatusClass = orderStatus === 'delivered' ? 'status-tag delivered' : `status-tag ${orderStatus?.toLowerCase()}`;
@@ -113,6 +117,24 @@ function OrderDetailsPage({ params }) {
                                         <span className={paymentStatusClass}>
                                             {paymentInfo?.status}
                                         </span>
+                                    </td>
+                                </tr>
+                                <tr className="table-row">
+                                    <th className="table-cell">Rental Period :-</th>
+                                    <td className='table-cell'>
+                                        {startDate ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}` : "N/A"}
+                                    </td>
+                                </tr>
+                                <tr className="table-row">
+                                    <th className="table-cell">Total Days :-</th>
+                                    <td className='table-cell'>
+                                        {totalDays || "N/A"}
+                                    </td>
+                                </tr>
+                                <tr className="table-row">
+                                    <th className="table-cell">Security Deposit :-</th>
+                                    <td className='table-cell'>
+                                        TK {securityDepositTotal || 0}
                                     </td>
                                 </tr>
                                 {paidAt && <tr className="table-row">
