@@ -25,6 +25,10 @@ function PaymentPage() {
             Image: item.Image,
             color: item.color,
         })),
+        startDate: orderData.startDate,
+        endDate: orderData.endDate,
+        totalDays: orderData.totalDays,
+        securityDepositTotal: orderData.securityDepositTotal,
         paymentInfo: orderData.paymentInfo,
     } : null;
 
