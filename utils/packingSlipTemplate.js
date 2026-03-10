@@ -1,12 +1,16 @@
 
 export const getPackingSlipHTML = (order, settings) => {
-    const { _id, createdAt, shippingInfo, orderItems, user } = order;
+    const { _id, createdAt, shippingInfo, orderItems, user, startDate, endDate, totalDays } = order;
 
     const modernDate = new Date(createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
+
+    const rentalPeriod = startDate && endDate 
+        ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`
+        : 'N/A';
 
     return `
     <!DOCTYPE html>
@@ -52,17 +56,20 @@ export const getPackingSlipHTML = (order, settings) => {
                 font-size: 0.9em;
                 color: #7f8c8d;
             }
-            .shipping-info {
+            .info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
                 margin-bottom: 30px;
             }
-            .shipping-info h2 {
-                font-size: 1.5em;
-                margin-bottom: 15px;
+            .info-section h2 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
                 color: #34495e;
                 border-bottom: 1px solid #ecf0f1;
-                padding-bottom: 10px;
+                padding-bottom: 5px;
             }
-            .shipping-info p {
+            .info-section p {
                 margin: 4px 0;
                 line-height: 1.6;
             }
@@ -99,8 +106,8 @@ export const getPackingSlipHTML = (order, settings) => {
             <div class="header">
                 <div class="company-details">
                     ${settings.siteLogoUrl ? `<img src="${settings.siteLogoUrl}" alt="YaMart BD" style="max-height: 50px; margin-bottom: 10px;">` : ''}
-                    <p>${settings.siteTitle}</p>
-                    <p>Gazipur ,Dhaka,Bangladesh</p>
+                    <p><strong>${settings.siteTitle}</strong></p>
+                    <p>Gazipur, Dhaka, Bangladesh</p>
                 </div>
                 <h1>Packing Slip</h1>
                 <div class="order-details">
@@ -108,13 +115,21 @@ export const getPackingSlipHTML = (order, settings) => {
                     <p><strong>Order Date:</strong> ${modernDate}</p>
                 </div>
             </div>
-            <div class="shipping-info">
-                <h2>Shipping To</h2>
-                <p><strong>Name:</strong> ${user?.name}</p>
-                <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
-                <p><strong>Country:</strong> ${shippingInfo?.Country}</p>
-                <p><strong>Phone:</strong> ${shippingInfo?.phoneNo}</p>
+
+            <div class="info-grid">
+                <div class="info-section">
+                    <h2>Shipping To</h2>
+                    <p><strong>Name:</strong> ${user?.name}</p>
+                    <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
+                    <p><strong>Phone:</strong> ${shippingInfo?.phoneNo}</p>
+                </div>
+                <div class="info-section">
+                    <h2>Rental Details</h2>
+                    <p><strong>Period:</strong> ${rentalPeriod}</p>
+                    <p><strong>Total Days:</strong> ${totalDays || 1}</p>
+                </div>
             </div>
+
             <h2>Items</h2>
             <table class="items-table">
                 <thead>
@@ -135,7 +150,7 @@ export const getPackingSlipHTML = (order, settings) => {
                 </tbody>
             </table>
             <div class="footer">
-                <p>Thank you for your order!</p>
+                <p>Thank you for choosing ${settings.siteTitle} for your decoration needs!</p>
             </div>
         </div>
     </body>

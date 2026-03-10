@@ -1,12 +1,16 @@
 
 export const getInvoiceHTML = (order, settings) => {
-    const { _id, createdAt, shippingInfo, orderItems, user, itemPrice, taxPrice, shippingPrice, totalPrice, paymentInfo } = order;
+    const { _id, createdAt, shippingInfo, orderItems, user, itemPrice, taxPrice, shippingPrice, totalPrice, paymentInfo, startDate, endDate, totalDays, securityDepositTotal } = order;
 
     const modernDate = new Date(createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
+
+    const rentalPeriod = startDate && endDate 
+        ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`
+        : 'N/A';
 
     return `
     <!DOCTYPE html>
@@ -52,17 +56,20 @@ export const getInvoiceHTML = (order, settings) => {
                 font-size: 0.9em;
                 color: #7f8c8d;
             }
-            .billing-info {
+            .info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
                 margin-bottom: 30px;
             }
-            .billing-info h2 {
-                font-size: 1.5em;
-                margin-bottom: 15px;
+            .info-section h2 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
                 color: #34495e;
                 border-bottom: 1px solid #ecf0f1;
-                padding-bottom: 10px;
+                padding-bottom: 5px;
             }
-            .billing-info p {
+            .info-section p {
                 margin: 4px 0;
                 line-height: 1.6;
             }
@@ -112,23 +119,32 @@ export const getInvoiceHTML = (order, settings) => {
             <div class="header">
                 <div class="company-details">
                     ${settings.siteLogoUrl ? `<img src="${settings.siteLogoUrl}" alt="YaMart BD" style="max-height: 50px; margin-bottom: 10px;">` : ''}
-                    <p>${settings.siteTitle}</p>
-                    <p>Gazipur ,Dhaka,Bangladesh</p>
+                    <p><strong>${settings.siteTitle}</strong></p>
+                    <p>Gazipur, Dhaka, Bangladesh</p>
                 </div>
                 <h1>Invoice</h1>
                 <div class="invoice-details">
                     <p><strong>Invoice ID:</strong> #${_id}</p>
-                    <p><strong>Invoice Date:</strong> ${modernDate}</p>
-                    <p><strong>Payment Status:</strong> ${paymentInfo?.status === 'succeeded' ? 'Paid' : 'Unpaid'}</p>
+                    <p><strong>Date:</strong> ${modernDate}</p>
+                    <p><strong>Status:</strong> ${paymentInfo?.status === 'succeeded' ? 'Paid' : 'Unpaid'}</p>
                 </div>
             </div>
-            <div class="billing-info">
-                <h2>Bill To</h2>
-                <p><strong>Name:</strong> ${user?.name}</p>
-                <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
-                <p><strong>Country:</strong> ${shippingInfo?.Country}</p>
-                <p><strong>Phone:</strong> ${shippingInfo?.phoneNo}</p>
+
+            <div class="info-grid">
+                <div class="info-section">
+                    <h2>Bill To</h2>
+                    <p><strong>Name:</strong> ${user?.name}</p>
+                    <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
+                    <p><strong>Phone:</strong> ${shippingInfo?.phoneNo}</p>
+                </div>
+                <div class="info-section">
+                    <h2>Rental Details</h2>
+                    <p><strong>Period:</strong> ${rentalPeriod}</p>
+                    <p><strong>Total Days:</strong> ${totalDays || 1}</p>
+                    <p><strong>Deposit:</strong> TK ${securityDepositTotal ? securityDepositTotal.toFixed(2) : '0.00'}</p>
+                </div>
             </div>
+
             <h2>Items</h2>
             <table class="items-table">
                 <thead>
@@ -136,7 +152,7 @@ export const getInvoiceHTML = (order, settings) => {
                         <th>Product</th>
                         <th>Quantity</th>
                         <th>Color</th>
-                        <th>Unit Price</th>
+                        <th>Price/Day</th>
                         <th>Total</th>
                     </tr>
                 </thead>
@@ -146,20 +162,23 @@ export const getInvoiceHTML = (order, settings) => {
                             <td>${item.name}</td>
                             <td>${item.quantity}</td>
                             <td>${item.color || 'N/A'}</td>
-                            <td>$${item.price.toFixed(2)}</td>
-                            <td>$${(item.quantity * item.price).toFixed(2)}</td>
+                            <td>TK ${item.price.toFixed(2)}</td>
+                            <td>TK ${(item.quantity * item.price * (totalDays || 1)).toFixed(2)}</td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
             <div class="totals">
-                <p><strong>Subtotal:</strong> $${itemPrice.toFixed(2)}</p>
-                <p><strong>Tax:</strong> $${taxPrice.toFixed(2)}</p>
-                <p><strong>Shipping:</strong> $${shippingPrice.toFixed(2)}</p>
-                <p class="grand-total"><strong>Total:</strong> $${totalPrice.toFixed(2)}</p>
+                <p><strong>Rental Subtotal:</strong> TK ${itemPrice.toFixed(2)}</p>
+                <p><strong>Security Deposit:</strong> TK ${securityDepositTotal ? securityDepositTotal.toFixed(2) : '0.00'}</p>
+                <p><strong>Tax:</strong> TK ${taxPrice.toFixed(2)}</p>
+                <p><strong>Shipping:</strong> TK ${shippingPrice.toFixed(2)}</p>
+                <div style="border-top: 2px solid #eee; margin-top: 10px; padding-top: 10px;">
+                    <p class="grand-total"><strong>Total Amount:</strong> TK ${totalPrice.toFixed(2)}</p>
+                </div>
             </div>
             <div class="footer">
-                <p>Thank you for your business!</p>
+                <p>Thank you for choosing ${settings.siteTitle} for your decoration needs!</p>
             </div>
         </div>
     </body>
