@@ -4,9 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChatHistory, sendMessage, receiveMessage } from '@/features/chat/chatSlice';
 import Pusher from 'pusher-js';
-import { Send, Person } from '@mui/icons-material';
+import { Send, Person, ChatBubble } from '@mui/icons-material';
 import Loader from '@/components/Loader';
+import AdminSidebar from '@/components/Admin/AdminSidebar';
 import '@/AdminStyles/ChatPanel.css';
+import '@/AdminStyles/Dashboard.css';
 
 const AdminChatPage = () => {
     const [chatUsers, setChatUsers] = useState([]);
@@ -86,60 +88,65 @@ const AdminChatPage = () => {
     };
 
     return (
-        <div className="admin-chat-container">
-            <div className="users-list-panel">
-                <h2>Recent Chats</h2>
-                {fetchingUsers ? <Loader /> : (
-                    <div className="users-scroll">
-                        {chatUsers.map((u) => (
-                            <div 
-                                key={u._id} 
-                                className={`user-item ${selectedUser?._id === u._id ? 'active' : ''}`}
-                                onClick={() => setSelectedUser(u)}
-                            >
-                                <div className="user-avatar"><Person /></div>
-                                <div className="user-info">
-                                    <div className="user-name">{u.name}</div>
-                                    <div className="last-msg">{u.lastMessage}</div>
-                                </div>
+        <div className="dashboard-container">
+            <AdminSidebar />
+            <div className="main-content">
+                <div className="admin-chat-container">
+                    <div className="users-list-panel">
+                        <h2>Recent Chats</h2>
+                        {fetchingUsers ? <Loader /> : (
+                            <div className="users-scroll">
+                                {chatUsers.map((u) => (
+                                    <div 
+                                        key={u._id} 
+                                        className={`user-item ${selectedUser?._id === u._id ? 'active' : ''}`}
+                                        onClick={() => setSelectedUser(u)}
+                                    >
+                                        <div className="user-avatar"><Person /></div>
+                                        <div className="user-info">
+                                            <div className="user-name">{u.name}</div>
+                                            <div className="last-msg">{u.lastMessage}</div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        )}
                     </div>
-                )}
-            </div>
 
-            <div className="chat-main-panel">
-                {selectedUser ? (
-                    <>
-                        <div className="chat-main-header">
-                            <h3>Chatting with {selectedUser.name}</h3>
-                        </div>
-                        <div className="chat-main-messages">
-                            {chatLoading ? <Loader /> : messages.map((msg, index) => (
-                                <div key={index} className={`admin-msg ${msg.isAdmin ? 'sent' : 'received'}`}>
-                                    <div className="admin-msg-bubble">{msg.message}</div>
-                                    <span className="admin-msg-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                    <div className="chat-main-panel">
+                        {selectedUser ? (
+                            <>
+                                <div className="chat-main-header">
+                                    <h3>Chatting with {selectedUser.name}</h3>
                                 </div>
-                            ))}
-                            <div ref={chatEndRef} />
-                        </div>
-                        <div className="chat-main-input">
-                            <input
-                                type="text"
-                                placeholder="Type your reply..."
-                                value={messageInput}
-                                onChange={(e) => setMessageInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                            />
-                            <button onClick={handleSend}><Send /></button>
-                        </div>
-                    </>
-                ) : (
-                    <div className="no-chat-selected">
-                        <ChatBubble style={{ fontSize: 60, color: '#ccc' }} />
-                        <p>Select a user to start chatting</p>
+                                <div className="chat-main-messages">
+                                    {chatLoading ? <Loader /> : messages.map((msg, index) => (
+                                        <div key={index} className={`admin-msg ${msg.isAdmin ? 'sent' : 'received'}`}>
+                                            <div className="admin-msg-bubble">{msg.message}</div>
+                                            <span className="admin-msg-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
+                                        </div>
+                                    ))}
+                                    <div ref={chatEndRef} />
+                                </div>
+                                <div className="chat-main-input">
+                                    <input
+                                        type="text"
+                                        placeholder="Type your reply..."
+                                        value={messageInput}
+                                        onChange={(e) => setMessageInput(e.target.value)}
+                                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                                    />
+                                    <button onClick={handleSend}><Send /></button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="no-chat-selected">
+                                <ChatBubble style={{ fontSize: 60, color: '#ccc' }} />
+                                <p>Select a user to start chatting</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );
