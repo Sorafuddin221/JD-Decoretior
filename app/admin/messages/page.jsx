@@ -15,11 +15,22 @@ const AdminChatPage = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [fetchingUsers, setFetchingUsers] = useState(true);
+    const [unreadUsers, setUnreadUsers] = useState({}); // { userId: true }
     
     const { user: adminUser } = useSelector((state) => state.user);
     const { messages, loading: chatLoading } = useSelector((state) => state.chat);
     const dispatch = useDispatch();
     const chatEndRef = useRef(null);
+
+    const handleUserSelect = (u) => {
+        setSelectedUser(u);
+        // Clear unread status when user is selected
+        setUnreadUsers(prev => {
+            const newState = { ...prev };
+            delete newState[u._id];
+            return newState;
+        });
+    };
 
     // Fetch list of users who have chatted
     useEffect(() => {
@@ -55,14 +66,24 @@ const AdminChatPage = () => {
 
             const channel = pusher.subscribe(`chat-${adminUser._id}`);
             channel.bind('new-message', (data) => {
-                // If it's a message from a user (not admin), add it
                 if (!data.message.isAdmin) {
-                    // If the message is from the currently selected user, update chat
-                    if (selectedUser && data.message.sender === selectedUser._id) {
+                    const senderId = data.message.sender;
+                    
+                    if (selectedUser && senderId === selectedUser._id) {
                         dispatch(receiveMessage(data.message));
+                    } else {
+                        setUnreadUsers(prev => ({ ...prev, [senderId]: true }));
                     }
-                    // Refresh user list to show last message
-                    // (Omitted for brevity, but ideally you'd update chatUsers state)
+                    
+                    setChatUsers(prevUsers => {
+                        const updatedUsers = prevUsers.map(u => {
+                            if (u._id === senderId) {
+                                return { ...u, lastMessage: data.message.message };
+                            }
+                            return u;
+                        });
+                        return updatedUsers;
+                    });
                 }
             });
 
@@ -99,12 +120,18 @@ const AdminChatPage = () => {
                                 {chatUsers.map((u) => (
                                     <div 
                                         key={u._id} 
-                                        className={`user-item ${selectedUser?._id === u._id ? 'active' : ''}`}
-                                        onClick={() => setSelectedUser(u)}
+                                        className={`user-item ${selectedUser?._id === u._id ? 'active' : ''} ${unreadUsers[u._id] ? 'unread' : ''}`}
+                                        onClick={() => handleUserSelect(u)}
                                     >
-                                        <div className="user-avatar"><Person /></div>
+                                        <div className="user-avatar">
+                                            <Person />
+                                            {unreadUsers[u._id] && <span className="unread-dot"></span>}
+                                        </div>
                                         <div className="user-info">
-                                            <div className="user-name">{u.name}</div>
+                                            <div className="user-name">
+                                                {u.name}
+                                                {unreadUsers[u._id] && <span className="new-badge">NEW</span>}
+                                            </div>
                                             <div className="last-msg">{u.lastMessage}</div>
                                         </div>
                                     </div>
