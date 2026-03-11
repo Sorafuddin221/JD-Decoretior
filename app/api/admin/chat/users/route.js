@@ -24,7 +24,17 @@ export const GET = handleAsyncError(async (request) => {
                     ]
                 },
                 lastMessage: { $last: "$message" },
-                lastTimestamp: { $last: "$createdAt" }
+                lastTimestamp: { $last: "$createdAt" },
+                // Count messages where isAdmin is false and isRead is false
+                unreadCount: {
+                    $sum: {
+                        $cond: [
+                            { $and: [{ $eq: ["$isAdmin", false] }, { $eq: ["$isRead", false] }] },
+                            1,
+                            0
+                        ]
+                    }
+                }
             }
         },
         {
@@ -41,6 +51,7 @@ export const GET = handleAsyncError(async (request) => {
                 _id: 1,
                 lastMessage: 1,
                 lastTimestamp: 1,
+                unreadCount: 1,
                 name: '$userDetails.name',
                 email: '$userDetails.email'
             }

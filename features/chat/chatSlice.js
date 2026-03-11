@@ -21,6 +21,16 @@ export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ receive
     }
 });
 
+// Mark messages as read
+export const markMessagesAsRead = createAsyncThunk('chat/markRead', async (userId, { rejectWithValue }) => {
+    try {
+        const { data } = await api.put(`/api/chat/read/${userId}`);
+        return { userId, success: data.success };
+    } catch (error) {
+        return rejectWithValue(error.response?.data || 'Could not mark messages as read');
+    }
+});
+
 const chatSlice = createSlice({
     name: 'chat',
     initialState: {
@@ -32,6 +42,9 @@ const chatSlice = createSlice({
     reducers: {
         receiveMessage: (state, action) => {
             state.messages.push(action.payload);
+        },
+        markAllRead: (state) => {
+            state.messages = state.messages.map(msg => ({ ...msg, isRead: true }));
         },
         clearChatErrors: (state) => {
             state.error = null;
@@ -52,9 +65,13 @@ const chatSlice = createSlice({
             })
             .addCase(sendMessage.fulfilled, (state, action) => {
                 state.messages.push(action.payload);
+            })
+            .addCase(markMessagesAsRead.fulfilled, (state) => {
+                // Locally mark all messages as read once API succeeds
+                state.messages = state.messages.map(msg => ({ ...msg, isRead: true }));
             });
     }
 });
 
-export const { receiveMessage, clearChatErrors } = chatSlice.actions;
+export const { receiveMessage, markAllRead, clearChatErrors } = chatSlice.actions;
 export default chatSlice.reducer;

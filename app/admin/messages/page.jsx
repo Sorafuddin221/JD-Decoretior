@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChatHistory, sendMessage, receiveMessage } from '@/features/chat/chatSlice';
+import { fetchChatHistory, sendMessage, receiveMessage, markMessagesAsRead } from '@/features/chat/chatSlice';
 import Pusher from 'pusher-js';
 import { Send, Person, ChatBubble } from '@mui/icons-material';
 import Loader from '@/components/Loader';
@@ -15,7 +15,6 @@ const AdminChatPage = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [fetchingUsers, setFetchingUsers] = useState(true);
-    const [unreadUsers, setUnreadUsers] = useState({}); // { userId: true }
     
     const { user: adminUser } = useSelector((state) => state.user);
     const { messages, loading: chatLoading } = useSelector((state) => state.chat);
@@ -24,12 +23,14 @@ const AdminChatPage = () => {
 
     const handleUserSelect = (u) => {
         setSelectedUser(u);
-        // Clear unread status when user is selected
-        setUnreadUsers(prev => {
-            const newState = { ...prev };
-            delete newState[u._id];
-            return newState;
-        });
+        // Clear unread status in the user list locally
+        setChatUsers(prevUsers => 
+            prevUsers.map(user => 
+                user._id === u._id ? { ...user, unreadCount: 0 } : user
+            )
+        );
+        // Mark messages as read in DB
+        dispatch(markMessagesAsRead(u._id));
     };
 
     // Fetch list of users who have chatted
@@ -75,23 +76,30 @@ const AdminChatPage = () => {
 
                     if (selectedUser && senderId === selectedUser._id) {
                         dispatch(receiveMessage(data.message));
-                    } else {
-                        setUnreadUsers(prev => ({ ...prev, [senderId]: true }));
+                        // If chat is open, mark the new message as read in DB
+                        dispatch(markMessagesAsRead(senderId));
                     }
                     
-                    // Update user list: Move sender to top and update last message
+                    // Update user list: Move sender to top, update last message and unread count
                     setChatUsers(prevUsers => {
                         const existingUserIndex = prevUsers.findIndex(u => u._id === senderId);
                         let updatedUsers = [...prevUsers];
 
                         if (existingUserIndex !== -1) {
-                            // User exists, update and move to top
-                            const user = { ...updatedUsers[existingUserIndex], lastMessage: data.message.message };
+                            // User exists
+                            const existingUser = updatedUsers[existingUserIndex];
+                            const isCurrentlySelected = selectedUser && senderId === selectedUser._id;
+                            
+                            const user = { 
+                                ...existingUser, 
+                                lastMessage: data.message.message,
+                                unreadCount: isCurrentlySelected ? 0 : (existingUser.unreadCount || 0) + 1
+                            };
+                            
                             updatedUsers.splice(existingUserIndex, 1);
                             updatedUsers.unshift(user);
                         } else {
-                            // New user who isn't in the list yet, we need to fetch their details or just reload
-                            // For simplicity, let's trigger a refresh of the user list
+                            // New user refresh
                             fetch('/api/admin/chat/users')
                                 .then(res => res.json())
                                 .then(data => { if(data.success) setChatUsers(data.users) });
@@ -134,17 +142,17 @@ const AdminChatPage = () => {
                                 {chatUsers.map((u) => (
                                     <div 
                                         key={u._id} 
-                                        className={`user-item ${selectedUser?._id === u._id ? 'active' : ''} ${unreadUsers[u._id] ? 'unread' : ''}`}
+                                        className={`user-item ${selectedUser?._id === u._id ? 'active' : ''} ${u.unreadCount > 0 ? 'unread' : ''}`}
                                         onClick={() => handleUserSelect(u)}
                                     >
                                         <div className="user-avatar">
                                             <Person />
-                                            {unreadUsers[u._id] && <span className="unread-dot"></span>}
+                                            {u.unreadCount > 0 && <span className="unread-dot"></span>}
                                         </div>
                                         <div className="user-info">
                                             <div className="user-name">
                                                 {u.name}
-                                                {unreadUsers[u._id] && <span className="new-badge">NEW</span>}
+                                                {u.unreadCount > 0 && <span className="new-badge">NEW</span>}
                                             </div>
                                             <div className="last-msg">{u.lastMessage}</div>
                                         </div>
@@ -162,7 +170,7 @@ const AdminChatPage = () => {
                                 </div>
                                 <div className="chat-main-messages">
                                     {chatLoading ? <Loader /> : messages.map((msg, index) => (
-                                        <div key={index} className={`admin-msg ${msg.isAdmin ? 'sent' : 'received'}`}>
+                                        <div key={index} className={`admin-msg ${msg.isAdmin ? 'sent' : 'received'} ${!msg.isAdmin && !msg.isRead ? 'new-unread' : ''}`}>
                                             <div className="admin-msg-bubble">{msg.message}</div>
                                             <span className="admin-msg-time">{new Date(msg.createdAt).toLocaleTimeString()}</span>
                                         </div>

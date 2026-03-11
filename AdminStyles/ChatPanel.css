@@ -153,6 +153,12 @@
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
+.received.new-unread .admin-msg-bubble {
+    font-weight: 700;
+    background-color: #fffbe6; /* Light yellow highlight */
+    border: 1px solid #ffe58f;
+}
+
 .admin-msg-time {
     font-size: 0.7rem;
     color: #777;
