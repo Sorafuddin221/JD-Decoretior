@@ -70,7 +70,10 @@ export const POST = handleAsyncError(async (request) => {
     const totalPrice = itemPrice + (securityDepositTotal || 0) + taxPrice + shippingPrice;
 
     const order = await Order.create({
-        shippingInfo,
+        shippingInfo: {
+            ...shippingInfo,
+            thana: shippingInfo.thana
+        },
         orderItems,
         paymentInfo,
         startDate,

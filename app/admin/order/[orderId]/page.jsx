@@ -145,8 +145,8 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
                     <h2>order Information</h2>
                     <p><strong>Customer Name :</strong>{adminOrder.user?.name}</p>
                     <p><strong>Order ID :</strong>{orderId}</p>
-                    <p><strong>Shipping Address :</strong>{shippingInfo.address},{shippingInfo.city},{shippingInfo.state }
-                        {shippingInfo.Country},{shippingInfo.pinCode}</p>
+                    <p><strong>Shipping Address :</strong>{shippingInfo.address}, {shippingInfo.thana}, {shippingInfo.city}, {shippingInfo.state }
+                        {shippingInfo.Country}, {shippingInfo.pinCode}</p>
                     <p><strong>Phone :</strong>{shippingInfo.phoneNo}</p>
                     <p><strong>Rental Period :</strong> {startDate ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}` : "N/A"}</p>
                     <p><strong>Total Days :</strong> {totalDays || "N/A"}</p>

@@ -88,7 +88,7 @@ function OrderDetailsPage({ params }) {
                                 </tr>
                                 <tr className="table-row">
                                     <th className="table-cell">Address :-</th>
-                                    <td className="table-cell">{shippingInfo.address},{shippingInfo.city},{shippingInfo.state},{shippingInfo.pinCode}</td>
+                                    <td className="table-cell">{shippingInfo.address}, {shippingInfo.thana}, {shippingInfo.city}, {shippingInfo.state}, {shippingInfo.pinCode}</td>
                                 </tr>
                                 <tr className="table-row">
                                     <th className="table-cell">Phone :-</th>

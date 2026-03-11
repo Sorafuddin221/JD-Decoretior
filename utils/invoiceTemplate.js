@@ -131,10 +131,10 @@ export const getInvoiceHTML = (order, settings) => {
             </div>
 
             <div class="info-grid">
-                <div class="info-section">
+                <div className="info-section">
                     <h2>Bill To</h2>
                     <p><strong>Name:</strong> ${user?.name}</p>
-                    <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
+                    <p><strong>Address:</strong> ${shippingInfo?.address}, ${shippingInfo?.thana}, ${shippingInfo?.city}, ${shippingInfo?.state} - ${shippingInfo?.pinCode}</p>
                     <p><strong>Phone:</strong> ${shippingInfo?.phoneNo}</p>
                 </div>
                 <div class="info-section">

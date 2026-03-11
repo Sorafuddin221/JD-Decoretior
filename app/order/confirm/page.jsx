@@ -86,6 +86,7 @@ function OrderConfirmPage() {
                 Country: shippingInfo.country,
                 phoneNo: shippingInfo.phoneNumber,
                 shippingMethod: shippingInfo.shippingMethod,
+                thana: shippingInfo.thana,
             },
             orderItems: cartItems.map(item => ({
                 name: item.name,
@@ -126,7 +127,7 @@ function OrderConfirmPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr><td>{user?.name}</td><td>{shippingInfo.phoneNumber}</td><td>{shippingInfo.address},{shippingInfo.city},{shippingInfo.state}{shippingInfo.country},{shippingInfo.pinCode}</td></tr>
+                            <tr><td>{user?.name}</td><td>{shippingInfo.phoneNumber}</td><td>{shippingInfo.address}, {shippingInfo.thana}, {shippingInfo.city}, {shippingInfo.state} {shippingInfo.country}, {shippingInfo.pinCode}</td></tr>
                         </tbody>
                     </table>
                     <table className="confirm-table cart-table">
