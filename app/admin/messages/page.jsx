@@ -69,19 +69,33 @@ const AdminChatPage = () => {
                 if (!data.message.isAdmin) {
                     const senderId = data.message.sender;
                     
+                    // Play notification sound
+                    const audio = new Audio('/images/notification.mp3');
+                    audio.play().catch(e => console.log("Audio play blocked by browser"));
+
                     if (selectedUser && senderId === selectedUser._id) {
                         dispatch(receiveMessage(data.message));
                     } else {
                         setUnreadUsers(prev => ({ ...prev, [senderId]: true }));
                     }
                     
+                    // Update user list: Move sender to top and update last message
                     setChatUsers(prevUsers => {
-                        const updatedUsers = prevUsers.map(u => {
-                            if (u._id === senderId) {
-                                return { ...u, lastMessage: data.message.message };
-                            }
-                            return u;
-                        });
+                        const existingUserIndex = prevUsers.findIndex(u => u._id === senderId);
+                        let updatedUsers = [...prevUsers];
+
+                        if (existingUserIndex !== -1) {
+                            // User exists, update and move to top
+                            const user = { ...updatedUsers[existingUserIndex], lastMessage: data.message.message };
+                            updatedUsers.splice(existingUserIndex, 1);
+                            updatedUsers.unshift(user);
+                        } else {
+                            // New user who isn't in the list yet, we need to fetch their details or just reload
+                            // For simplicity, let's trigger a refresh of the user list
+                            fetch('/api/admin/chat/users')
+                                .then(res => res.json())
+                                .then(data => { if(data.success) setChatUsers(data.users) });
+                        }
                         return updatedUsers;
                     });
                 }
