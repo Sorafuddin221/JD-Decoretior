@@ -7,6 +7,8 @@ function PaymentsClientComponent() {
   const [taxPercentage, setTaxPercentage] = useState(0);
   const [shippingZones, setShippingZones] = useState([{ name: '', cost: 0 }]);
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(10000);
+  const [activeDivisions, setActiveDivisions] = useState(["Rajshahi"]);
+  const [activeDistricts, setActiveDistricts] = useState(["Naogaon"]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -18,6 +20,8 @@ function PaymentsClientComponent() {
             setTaxPercentage(data.taxPercentage || 0);
             setShippingZones(data.shippingZones?.length > 0 ? data.shippingZones : [{ name: '', cost: 0 }]);
             setFreeShippingThreshold(data.freeShippingThreshold || 10000);
+            setActiveDivisions(data.activeDivisions?.length > 0 ? data.activeDivisions : ["Rajshahi"]);
+            setActiveDistricts(data.activeDistricts?.length > 0 ? data.activeDistricts : ["Naogaon"]);
           }
         }
       } catch (error) {
@@ -55,6 +59,8 @@ function PaymentsClientComponent() {
       taxPercentage: Number(taxPercentage),
       shippingZones,
       freeShippingThreshold: Number(freeShippingThreshold),
+      activeDivisions,
+      activeDistricts,
     };
 
     try {
@@ -81,6 +87,51 @@ function PaymentsClientComponent() {
     <div className="admin-settings-container">
       <h3>Configure Payments</h3>
       <form onSubmit={handleSave} className="settings-form">
+        <div className="form-group" style={{ background: '#f9f9f9', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+          <h4 style={{ marginBottom: '15px' }}>Service Area Control</h4>
+          
+          <div style={{ marginBottom: '20px' }}>
+            <label>Active Divisions:</label>
+            {activeDivisions.map((div, index) => (
+              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+                <input 
+                  type="text" 
+                  value={div} 
+                  onChange={(e) => {
+                    const newDivs = [...activeDivisions];
+                    newDivs[index] = e.target.value;
+                    setActiveDivisions(newDivs);
+                  }}
+                  placeholder="e.g. Rajshahi"
+                />
+                <button type="button" onClick={() => setActiveDivisions(activeDivisions.filter((_, i) => i !== index))} style={{ padding: '5px 10px', background: '#ff4d4f', color: 'white', border: 'none', borderRadius: '4px' }}>X</button>
+              </div>
+            ))}
+            <button type="button" onClick={() => setActiveDivisions([...activeDivisions, ""])} style={{ fontSize: '12px', background: '#eee', border: '1px solid #ccc', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}>+ Add Division</button>
+          </div>
+
+          <div>
+            <label>Active Districts:</label>
+            {activeDistricts.map((dist, index) => (
+              <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '5px' }}>
+                <input 
+                  type="text" 
+                  value={dist} 
+                  onChange={(e) => {
+                    const newDists = [...activeDistricts];
+                    newDists[index] = e.target.value;
+                    setActiveDistricts(newDists);
+                  }}
+                  placeholder="e.g. Naogaon"
+                />
+                <button type="button" onClick={() => setActiveDistricts(activeDistricts.filter((_, i) => i !== index))} style={{ padding: '5px 10px', background: '#ff4d4f', color: 'white', border: 'none', borderRadius: '4px' }}>X</button>
+              </div>
+            ))}
+            <button type="button" onClick={() => setActiveDistricts([...activeDistricts, ""])} style={{ fontSize: '12px', background: '#eee', border: '1px solid #ccc', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}>+ Add District</button>
+          </div>
+          <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>* Customers will only see these options on the shipping page.</p>
+        </div>
+
         <div className="form-group">
           <label htmlFor="taxPercentage">Tax Percentage (%):</label>
           <input

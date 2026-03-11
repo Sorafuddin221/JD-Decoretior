@@ -6,7 +6,7 @@ import handleAsyncError from '@/middleware/handleAsyncError';
 export const POST = handleAsyncError(async (request) => {
   await db();
   const body = await request.json();
-  const { taxPercentage, shippingZones, freeShippingThreshold } = body;
+  const { taxPercentage, shippingZones, freeShippingThreshold, activeDivisions, activeDistricts } = body;
 
   let settings = await PaymentSettings.findOne();
 
@@ -15,6 +15,8 @@ export const POST = handleAsyncError(async (request) => {
     settings.taxPercentage = taxPercentage;
     settings.shippingZones = shippingZones;
     settings.freeShippingThreshold = freeShippingThreshold;
+    settings.activeDivisions = activeDivisions;
+    settings.activeDistricts = activeDistricts;
     await settings.save();
   } else {
     // Create new settings
@@ -22,6 +24,8 @@ export const POST = handleAsyncError(async (request) => {
       taxPercentage,
       shippingZones,
       freeShippingThreshold,
+      activeDivisions,
+      activeDistricts,
     });
   }
 

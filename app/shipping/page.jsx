@@ -21,6 +21,10 @@ function ShippingPage() {
     const [country, setCountry] = useState(shippingInfo.country || "BD"); // Default to Bangladesh
     const [state, setState] = useState(shippingInfo.state || "");
     const [city, setCity] = useState(shippingInfo.city || "");
+    const [thana, setThana] = useState(shippingInfo.thana || ""); // New thana state
+
+    const [paymentSettings, setPaymentSettings] = useState(null);
+    const [loadingSettings, setLoadingSettings] = useState(true);
 
     // Error states for validation
     const [addressError, setAddressError] = useState(false);
@@ -31,23 +35,25 @@ function ShippingPage() {
 
     const [isDivisionDisabled, setIsDivisionDisabled] = useState(false);
 
-    // Get the exact "Dhaka" division name from bdData
-    const dhakaDivisionName = bdData.divisions.find(div => div.name.toLowerCase() === 'dhaka')?.name || 'Dhaka';
-
     useEffect(() => {
-        if (shippingInfo.shippingMethod === "inside") {
-            setState(dhakaDivisionName);
-            setCity(""); // Clear city if division is forced
-            setIsDivisionDisabled(true);
-        } else {
-            setIsDivisionDisabled(false);
-            // If previously forced to Dhaka, and now outside, clear state
-            if (state === dhakaDivisionName && shippingInfo.shippingMethod !== "inside") {
-                setState("");
-                setCity("");
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch('/api/payment-settings', { cache: 'no-store' });
+                const data = await res.json();
+                setPaymentSettings(data);
+                
+                // If only one division exists, pre-select it
+                if (data.activeDivisions?.length === 1) setState(data.activeDivisions[0]);
+                // If only one district exists, pre-select it
+                if (data.activeDistricts?.length === 1) setCity(data.activeDistricts[0]);
+            } catch (error) {
+                console.error("Error fetching settings:", error);
+            } finally {
+                setLoadingSettings(false);
             }
-        }
-    }, [shippingInfo.shippingMethod, state, dhakaDivisionName]);
+        };
+        fetchSettings();
+    }, []);
 
     const shippingInfoSubmit = (e) => {
         e.preventDefault();
@@ -92,7 +98,16 @@ function ShippingPage() {
         }
 
         if (isValid) {
-            dispatch(saveShippingInfo({ address, pinCode, state, city, country, phoneNumber, shippingMethod: shippingInfo.shippingMethod }));
+            dispatch(saveShippingInfo({ 
+                address, 
+                pinCode, 
+                state, 
+                city, 
+                thana,
+                country, 
+                phoneNumber, 
+                shippingMethod: shippingInfo.shippingMethod 
+            }));
             router.push('/order/confirm');
         }
     };
@@ -174,45 +189,49 @@ function ShippingPage() {
                             <label htmlFor="state">Division</label>
                             <select
                                 value={state}
-                                onChange={(e) => {
-                                    setCity("");
-                                    setState(e.target.value);
-                                    setStateError(false); // Clear error on change
-                                    setCityError(false); // Clear city error too
-                                }}
-                                onFocus={() => setStateError(false)}
-                                onBlur={(e) => setStateError(!e.target.value.trim())}
+                                onChange={(e) => setState(e.target.value)}
                                 id="state"
                                 name="state"
-                                disabled={isDivisionDisabled}
-                                className={stateError ? 'error-field' : ''}
+                                required
                             >
-                                <option value="">Select a Division</option>
-                                {bdData.divisions.map((item) => (
-                                    <option value={item.name} key={item.name}>{item.name}</option>
+                                <option value="">Select Division</option>
+                                {paymentSettings?.activeDivisions?.map((div) => (
+                                    <option value={div} key={div}>{div}</option>
                                 ))}
                             </select>
                         </div>
-                        {state && <div className="shipping-form-group">
+                        <div className="shipping-form-group">
                             <label htmlFor="city">District</label>
                             <select
                                 value={city}
-                                onChange={(e) => {
-                                    setCity(e.target.value);
-                                    setCityError(false); // Clear error on change
-                                }}
-                                onFocus={() => setCityError(false)}
-                                onBlur={(e) => setCityError(!e.target.value.trim())}
+                                onChange={(e) => setCity(e.target.value)}
                                 id="city"
                                 name="city"
-                                className={cityError ? 'error-field' : ''}
+                                required
                             >
-                                <option value="">Select a District</option>
-                                {bdData.divisions.find(div => div.name === state)?.districts.map((item) => (
-                                    <option value={item} key={item}>{item}</option>
+                                <option value="">Select District</option>
+                                {paymentSettings?.activeDistricts?.map((dist) => (
+                                    <option value={dist} key={dist}>{dist}</option>
                                 ))}
                             </select>
-                        </div>}
+                        </div>
+                        <div className="shipping-form-group">
+                            <label htmlFor="thana">Thana / Area</label>
+                            <select
+                                value={thana}
+                                onChange={(e) => {
+                                    setThana(e.target.value);
+                                }}
+                                id="thana"
+                                name="thana"
+                                required
+                            >
+                                <option value="">Select Thana/Area</option>
+                                {paymentSettings?.shippingZones?.map((zone) => (
+                                    <option value={zone.name} key={zone.name}>{zone.name}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <button className="shipping-submit-btn">Continue</button>
                 </form>

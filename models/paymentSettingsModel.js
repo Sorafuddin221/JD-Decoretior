@@ -11,6 +11,14 @@ const paymentSettingsSchema = new mongoose.Schema({
       cost: { type: Number, required: true }
     }
   ],
+  activeDivisions: {
+    type: [String],
+    default: ["Rajshahi"]
+  },
+  activeDistricts: {
+    type: [String],
+    default: ["Naogaon"]
+  },
   freeShippingThreshold: {
     type: Number,
     default: 10000,
