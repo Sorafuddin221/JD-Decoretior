@@ -5,13 +5,15 @@ const paymentSettingsSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  insideDhakaShippingCost: {
+  shippingZones: [
+    {
+      name: { type: String, required: true },
+      cost: { type: Number, required: true }
+    }
+  ],
+  freeShippingThreshold: {
     type: Number,
-    default: 0,
-  },
-  outsideDhakaShippingCost: {
-    type: Number,
-    default: 0,
+    default: 10000,
   },
 }, { timestamps: true });
 

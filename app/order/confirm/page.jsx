@@ -20,6 +20,7 @@ function OrderConfirmPage() {
         taxPercentage: 0,
         insideDhakaShippingCost: 0,
         outsideDhakaShippingCost: 0,
+        freeShippingThreshold: 10000,
     });
     const [loading, setLoading] = useState(true);
 
@@ -32,6 +33,7 @@ function OrderConfirmPage() {
                     taxPercentage: data.taxPercentage || 0,
                     insideDhakaShippingCost: data.insideDhakaShippingCost || 0,
                     outsideDhakaShippingCost: data.outsideDhakaShippingCost || 0,
+                    freeShippingThreshold: data.freeShippingThreshold || 10000,
                 });
             } catch (error) {
                 toast.error("Error fetching payment settings");
@@ -64,10 +66,11 @@ function OrderConfirmPage() {
     const tax = subtotal * (paymentSettings.taxPercentage / 100); 
 
     // Dynamic Shipping Charges Calculation
-    const shippingCharges = 
-        shippingInfo.shippingMethod === 'inside' 
+    const isFreeShipping = subtotal >= (paymentSettings.freeShippingThreshold || 10000);
+    const shippingCharges = isFreeShipping ? 0 :
+        (shippingInfo.shippingMethod === 'inside' 
             ? paymentSettings.insideDhakaShippingCost 
-            : paymentSettings.outsideDhakaShippingCost;
+            : paymentSettings.outsideDhakaShippingCost);
 
     const total = subtotal + securityDepositTotal + tax + shippingCharges;
 
@@ -181,7 +184,7 @@ function OrderConfirmPage() {
                                 <tr>
                                     <td>TK {subtotal.toFixed(2)}</td>
                                     <td>TK {securityDepositTotal.toFixed(2)}</td>
-                                    <td>TK {shippingCharges.toFixed(2)}</td>
+                                    <td>{isFreeShipping ? <span style={{color: 'green', fontWeight: 'bold'}}>FREE</span> : `TK ${shippingCharges.toFixed(2)}`}</td>
                                     <td>TK {tax.toFixed(2)}</td>
                                     <td>TK {total.toFixed(2)}</td>
                                 </tr>

@@ -14,24 +14,25 @@ import { toast } from 'react-toastify';
 function CartPage() {
     const { cartItems, shippingInfo } = useSelector(state => state.cart);
     const dispatch = useDispatch();
-    const [shippingMethod, setShippingMethod] = useState(shippingInfo.shippingMethod || null);
+    const [selectedZone, setSelectedUserZone] = useState(shippingInfo.shippingMethod || null);
 
     // Load payment settings from localStorage
     const [paymentSettings, setPaymentSettings] = useState({
         taxPercentage: 0,
-        insideDhakaShippingCost: 0,
-        outsideDhakaShippingCost: 0,
+        shippingZones: [],
+        freeShippingThreshold: 10000,
     });
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         const fetchPaymentSettings = async () => {
             try {
-                const res = await fetch('/api/payment-settings');
+                const res = await fetch('/api/payment-settings', { cache: 'no-store' });
                 const data = await res.json();
+                console.log("Fetched Payment Settings:", data); // Debug log
                 setPaymentSettings({
                     taxPercentage: data.taxPercentage || 0,
-                    insideDhakaShippingCost: data.insideDhakaShippingCost || 0,
-                    outsideDhakaShippingCost: data.outsideDhakaShippingCost || 0,
+                    shippingZones: data.shippingZones || [],
+                    freeShippingThreshold: data.freeShippingThreshold || 10000,
                 });
             } catch (error) {
                 toast.error("Error fetching payment settings");
@@ -63,12 +64,9 @@ function CartPage() {
     const tax = subtotal * (paymentSettings.taxPercentage / 100); 
 
     // Dynamic Shipping Charges Calculation
-    const currentShippingCharges = 
-        shippingMethod === "inside" 
-            ? paymentSettings.insideDhakaShippingCost 
-            : shippingMethod === "outside"
-                ? paymentSettings.outsideDhakaShippingCost
-                : 0;
+    const isFreeShipping = subtotal >= (paymentSettings.freeShippingThreshold || 10000);
+    const zoneData = paymentSettings.shippingZones.find(z => z.name === selectedZone);
+    const currentShippingCharges = isFreeShipping ? 0 : (zoneData ? zoneData.cost : 0);
 
     const total = subtotal + securityDepositTotal + tax + currentShippingCharges;
 
@@ -81,8 +79,8 @@ function CartPage() {
             return;
         }
 
-        if (!shippingMethod) {
-            toast.error("Please select your shipping zone");
+        if (!selectedZone) {
+            toast.error("Please select your shipping area");
             return;
         }
         dispatch(saveShippingInfo({
@@ -92,7 +90,7 @@ function CartPage() {
             city: shippingInfo.city,
             country: shippingInfo.country,
             phoneNumber: shippingInfo.phoneNumber,
-            shippingMethod
+            shippingMethod: selectedZone
         }));
         router.push('/shipping'); // Assuming /shipping is the next step
     };
@@ -123,31 +121,24 @@ function CartPage() {
                     <div className="price-summary">
                         <div className='shipping-page'>
                             <div className=" shipping-summary">
-                                <h3 className="price-summary-header">Shipping Zone</h3>
-                                {loading ? <p>Loading...</p> : <>
-                                    <div className='shipping-item'>
-                                        <input
-                                            type="radio"
-                                            id="inside"
-                                            name="shippingMethod"
-                                            value="inside"
-                                            checked={shippingMethod === "inside"}
-                                            onChange={() => setShippingMethod("inside")}
-                                        />
-                                        <label htmlFor="inside">Inside Dhaka (TK {paymentSettings.insideDhakaShippingCost.toFixed(2)})</label>
-                                    </div>
-                                    <div className='shipping-item'>
-                                        <input
-                                            type="radio"
-                                            id="outside"
-                                            name="shippingMethod"
-                                            value="outside"
-                                            checked={shippingMethod === "outside"}
-                                            onChange={() => setShippingMethod("outside")}
-                                        />
-                                        <label htmlFor="outside">Outside Dhaka (TK {paymentSettings.outsideDhakaShippingCost.toFixed(2)})</label>
-                                    </div>
-                                </>}
+                                <h3 className="price-summary-header">Shipping Area</h3>
+                                {loading ? <p>Loading...</p> : (
+                                    paymentSettings.shippingZones.length > 0 ? (
+                                        paymentSettings.shippingZones.map((zone, idx) => (
+                                            <div className='shipping-item' key={idx}>
+                                                <input
+                                                    type="radio"
+                                                    id={`zone-${idx}`}
+                                                    name="shippingZone"
+                                                    value={zone.name}
+                                                    checked={selectedZone === zone.name}
+                                                    onChange={() => setSelectedUserZone(zone.name)}
+                                                />
+                                                <label htmlFor={`zone-${idx}`}>{zone.name} (TK {zone.cost.toFixed(2)})</label>
+                                            </div>
+                                        ))
+                                    ) : <p>No shipping zones configured.</p>
+                                )}
                             </div>
                         </div>
                         <h3 className="price-summary-header">Price Summary</h3>
@@ -166,8 +157,15 @@ function CartPage() {
                             </div>
                             <div className="summary-item">
                                 <p className="summary-label">Shipping</p>
-                                <p className="summary-label">TK {currentShippingCharges.toFixed(2)}</p>
+                                <p className="summary-label" style={{ color: isFreeShipping ? 'green' : 'inherit' }}>
+                                    {isFreeShipping ? 'FREE' : `TK ${currentShippingCharges.toFixed(2)}`}
+                                </p>
                             </div>
+                            {isFreeShipping && (
+                                <p style={{ fontSize: '12px', color: 'green', margin: '0 0 10px 0' }}>
+                                    * Free shipping applied for orders over TK {paymentSettings.freeShippingThreshold}
+                                </p>
+                            )}
                             <div className="summary-total">
                                 <p className="total-label">Total Amount</p>
                                 <p className="total-value">TK {total.toFixed(2)}</p>

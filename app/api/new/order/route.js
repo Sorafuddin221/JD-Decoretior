@@ -42,6 +42,7 @@ export const POST = handleAsyncError(async (request) => {
     const taxPercentage = paymentSettings?.taxPercentage || 0;
     const insideDhakaShippingCost = paymentSettings?.insideDhakaShippingCost || 0;
     const outsideDhakaShippingCost = paymentSettings?.outsideDhakaShippingCost || 0;
+    const freeShippingThreshold = paymentSettings?.freeShippingThreshold || 10000;
 
     let itemPrice = 0;
     for (const item of orderItems) {
@@ -57,11 +58,13 @@ export const POST = handleAsyncError(async (request) => {
     const taxPrice = itemPrice * (taxPercentage / 100);
 
     let shippingPrice = 0;
-    // Assuming 'city' is available in shippingInfo and check for 'Dhaka' for inside Dhaka shipping
-    if (shippingInfo.city && shippingInfo.city.toLowerCase().includes('dhaka')) {
-        shippingPrice = insideDhakaShippingCost;
-    } else {
-        shippingPrice = outsideDhakaShippingCost;
+    if (itemPrice < freeShippingThreshold) {
+        // Assuming 'city' is available in shippingInfo and check for 'Dhaka' for inside Dhaka shipping
+        if (shippingInfo.city && shippingInfo.city.toLowerCase().includes('dhaka')) {
+            shippingPrice = insideDhakaShippingCost;
+        } else {
+            shippingPrice = outsideDhakaShippingCost;
+        }
     }
 
     const totalPrice = itemPrice + (securityDepositTotal || 0) + taxPrice + shippingPrice;

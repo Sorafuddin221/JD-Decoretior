@@ -6,22 +6,22 @@ import handleAsyncError from '@/middleware/handleAsyncError';
 export const POST = handleAsyncError(async (request) => {
   await db();
   const body = await request.json();
-  const { taxPercentage, insideDhakaShippingCost, outsideDhakaShippingCost } = body;
+  const { taxPercentage, shippingZones, freeShippingThreshold } = body;
 
   let settings = await PaymentSettings.findOne();
 
   if (settings) {
     // Update existing settings
     settings.taxPercentage = taxPercentage;
-    settings.insideDhakaShippingCost = insideDhakaShippingCost;
-    settings.outsideDhakaShippingCost = outsideDhakaShippingCost;
+    settings.shippingZones = shippingZones;
+    settings.freeShippingThreshold = freeShippingThreshold;
     await settings.save();
   } else {
     // Create new settings
     settings = await PaymentSettings.create({
       taxPercentage,
-      insideDhakaShippingCost,
-      outsideDhakaShippingCost,
+      shippingZones,
+      freeShippingThreshold,
     });
   }
 
