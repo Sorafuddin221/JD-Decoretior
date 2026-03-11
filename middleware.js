@@ -4,26 +4,8 @@ import { jwtVerify } from 'jose'; // Import jwtVerify from jose
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Define paths that require admin authentication
-  const adminPaths = [
-    '/admin/dashboard',
-    '/admin/slides/all',
-    '/admin/slides/create',
-    '/admin/offers/all',
-    '/admin/offers/create',
-    '/admin/users',
-    '/admin/user', // specific user page
-    '/admin/reviews',
-    '/admin/products',
-    '/admin/product', // specific product page
-    '/admin/orders',
-    '/admin/order', // specific order page
-    '/admin/category', // specific category page
-    '/admin/categories',
-  ];
-
   // Check if the current path is an admin path
-  const isAdminPath = adminPaths.some(path => pathname.startsWith(path));
+  const isAdminPath = pathname.startsWith('/admin/');
 
   // If it's not an admin path, let the request proceed
   if (!isAdminPath) {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChatHistory, sendMessage, receiveMessage, markMessagesAsRead } from '@/features/chat/chatSlice';
 import Pusher from 'pusher-js';
@@ -11,15 +12,23 @@ import '@/AdminStyles/ChatPanel.css';
 import '@/AdminStyles/Dashboard.css';
 
 const AdminChatPage = () => {
+    const router = useRouter();
     const [chatUsers, setChatUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [messageInput, setMessageInput] = useState('');
     const [fetchingUsers, setFetchingUsers] = useState(true);
     
-    const { user: adminUser } = useSelector((state) => state.user);
+    const { user: adminUser, loading: userLoading } = useSelector((state) => state.user);
     const { messages, loading: chatLoading } = useSelector((state) => state.chat);
     const dispatch = useDispatch();
     const chatEndRef = useRef(null);
+
+    // Protection: If not admin, redirect
+    useEffect(() => {
+        if (!userLoading && (!adminUser || adminUser.role !== 'admin')) {
+            router.push('/login?redirect=/admin/messages');
+        }
+    }, [adminUser, userLoading, router]);
 
     const handleUserSelect = (u) => {
         setSelectedUser(u);
