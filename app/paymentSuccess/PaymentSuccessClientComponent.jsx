@@ -19,15 +19,19 @@ function PaymentSuccessClientComponent() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (method === 'cod') {
-            toast.success('Order Confirmed!', { position: 'top-center', autoClose: 3000 });
+        if (method === 'cod' || method === 'bkash') {
+            if (method === 'cod') {
+                toast.success('Order Confirmed (COD)!', { position: 'top-center', autoClose: 3000 });
+            } else {
+                toast.success('Order Submitted! bKash payment pending verification.', { position: 'top-center', autoClose: 3000 });
+            }
             dispatch(clearCart());
-            sessionStorage.removeItem('orderData'); // Assuming orderData is handled by app/payment/page.jsx now
-            sessionStorage.removeItem('orderItem'); // Clear if stored by app/payment/page.jsx
+            sessionStorage.removeItem('orderData');
+            sessionStorage.removeItem('orderItem');
         } else {
             toast.error('Payment method not recognized or an error occurred.', { position: 'top-center', autoClose: 3000 });
-            sessionStorage.removeItem('orderData'); // Clear any stale orderData
-            sessionStorage.removeItem('orderItem'); // Clear any stale orderItem
+            sessionStorage.removeItem('orderData');
+            sessionStorage.removeItem('orderItem');
         }
 
         return () => {

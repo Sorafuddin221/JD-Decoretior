@@ -35,39 +35,11 @@ export const POST = handleAsyncError(async (request) => {
         endDate,
         totalDays,
         securityDepositTotal,
+        itemPrice,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
     } = await request.json(); // Use request.json()
-
-    // Fetch payment settings for calculations
-    const paymentSettings = await PaymentSettings.findOne();
-    const taxPercentage = paymentSettings?.taxPercentage || 0;
-    const insideDhakaShippingCost = paymentSettings?.insideDhakaShippingCost || 0;
-    const outsideDhakaShippingCost = paymentSettings?.outsideDhakaShippingCost || 0;
-    const freeShippingThreshold = paymentSettings?.freeShippingThreshold || 10000;
-
-    let itemPrice = 0;
-    for (const item of orderItems) {
-        const product = await Product.findById(item.product);
-        if (!product) {
-            const error = new Error(`Product with ID ${item.product} not found`);
-            error.statusCode = 404;
-            throw error;
-        }
-        itemPrice += (product.offeredPrice || product.price) * item.quantity * (totalDays || 1); // Use actual product price from DB and totalDays
-    }
-
-    const taxPrice = itemPrice * (taxPercentage / 100);
-
-    let shippingPrice = 0;
-    if (itemPrice < freeShippingThreshold) {
-        // Assuming 'city' is available in shippingInfo and check for 'Dhaka' for inside Dhaka shipping
-        if (shippingInfo.city && shippingInfo.city.toLowerCase().includes('dhaka')) {
-            shippingPrice = insideDhakaShippingCost;
-        } else {
-            shippingPrice = outsideDhakaShippingCost;
-        }
-    }
-
-    const totalPrice = itemPrice + (securityDepositTotal || 0) + taxPrice + shippingPrice;
 
     const order = await Order.create({
         shippingInfo: {
@@ -75,16 +47,23 @@ export const POST = handleAsyncError(async (request) => {
             thana: shippingInfo.thana
         },
         orderItems,
-        paymentInfo,
+        paymentInfo: {
+            id: paymentInfo.id,
+            status: paymentInfo.status || (paymentInfo.method === 'cod' ? 'Processing' : 'Pending Verification'),
+            method: paymentInfo.method || 'cod',
+            bkashNumber: paymentInfo.bkashNumber,
+            trxID: paymentInfo.trxID,
+            paidAmount: Number(paymentInfo.paidAmount) || 0
+        },
         startDate,
         endDate,
         totalDays: totalDays || 1,
         securityDepositTotal: securityDepositTotal || 0,
-        itemPrice,
-        taxPrice,
-        shippingPrice,
-        totalPrice,
-        paidAt: Date.now(),
+        itemPrice: itemPrice || 0,
+        taxPrice: taxPrice || 0,
+        shippingPrice: shippingPrice || 0,
+        totalPrice: totalPrice || 0,
+        paidAt: paymentInfo.method === 'bkash' ? Date.now() : undefined,
         user: user._id,
     });
 

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getOrderDetails as getUserOrderDetails } from '@/features/order/orderSlice';
 import Loader from '@/components/Loader';
 import { toast } from 'react-toastify'; 
-import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } from '@/features/admin/adminSlice.js';
+import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus, updatePaymentStatus } from '@/features/admin/adminSlice.js';
 
  function UpdateOrderPage() {
     const [status, setStatus] = useState("");
@@ -30,13 +30,18 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
         paymentInfo = {},
         orderStatus,
         totalPrice,
+        taxPrice,
+        shippingPrice,
+        itemPrice,
         startDate,
         endDate,
         totalDays,
         securityDepositTotal
     } = adminOrder;
 
-    const paymentStatus = paymentInfo.status === 'succeeded' ? 'Paid' : (paymentInfo.status || 'Not Paid');
+    const paidAmount = paymentInfo?.paidAmount || 0;
+    const dueAmount = (totalPrice || 0) - (paidAmount || 0);
+    const paymentStatus = paymentInfo.status === 'succeeded' || paymentInfo.status === 'Paid' ? 'Paid' : (paymentInfo.status || 'Not Paid');
     const finalOrderStatus = orderStatus;
 
     const handleStatusUpdate = async () => {
@@ -45,6 +50,14 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
             return;
         }
         await dispatch(updateOrderStatus({ orderId, status }));
+    };
+
+    const handleMarkAsPaid = async () => {
+        if (window.confirm("Are you sure you want to mark this order as Paid? Verify bKash TrxID first.")) {
+            // For COD, mark full total as paid. For others, keep current paidAmount or update.
+            const amountToMark = paymentInfo.method === 'cod' ? totalPrice : paidAmount;
+            await dispatch(updatePaymentStatus({ orderId, status: 'Paid', paidAmount: amountToMark }));
+        }
     };
 
     const handleGeneratePackingSlip = async () => {
@@ -150,10 +163,36 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus } 
                     <p><strong>Phone :</strong>{shippingInfo.phoneNo}</p>
                     <p><strong>Rental Period :</strong> {startDate ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}` : "N/A"}</p>
                     <p><strong>Total Days :</strong> {totalDays || "N/A"}</p>
+                    <p><strong>Items Price :</strong> TK {itemPrice || 0}</p>
+                    <p><strong>Shipping Price :</strong> TK {shippingPrice || 0}</p>
+                    <p><strong>Tax Price :</strong> TK {taxPrice || 0}</p>
                     <p><strong>Security Deposit :</strong> TK {securityDepositTotal || 0} (Refundable)</p>
                     <p><strong>Order Status :</strong>{finalOrderStatus}</p>
-                    <p><strong>Payment Status :</strong>{paymentStatus}</p>
-                    <p><strong>total Price :</strong>{totalPrice}</p>
+                    <div style={{border: '1px solid #eee', padding: '15px', borderRadius: '8px', margin: '15px 0', backgroundColor: '#fdfdfd', boxShadow: '0 2px 4px rgba(0,0,0,0.02)'}}>
+                        <h3 style={{fontSize: '1rem', marginBottom: '10px', color: '#555', borderBottom: '1px solid #eee', paddingBottom: '5px'}}>Payment Verification</h3>
+                        <p><strong>Method :</strong> {paymentInfo.method?.toUpperCase() || 'N/A'}</p>
+                        <p><strong>Status :</strong> <span style={{color: paymentStatus === 'Paid' ? '#28a745' : '#fd7e14', fontWeight: 'bold'}}>{paymentStatus}</span></p>
+                        {paymentInfo.method === 'bkash' && (
+                            <>
+                                <p><strong>Customer bKash No :</strong> {paymentInfo.bkashNumber || 'N/A'}</p>
+                                <p><strong>Transaction ID :</strong> <span style={{color: '#d12053', fontWeight: 'bold', letterSpacing: '1px'}}>{paymentInfo.trxID || 'N/A'}</span></p>
+                            </>
+                        )}
+                        <p><strong>Amount Paid :</strong> <span style={{color: '#28a745', fontWeight: 'bold'}}>TK {paidAmount}</span></p>
+                        <p><strong>Due Amount :</strong> <span style={{color: '#dc3545', fontWeight: 'bold'}}>TK {Math.round(dueAmount)}</span></p>
+
+                        {paymentStatus !== 'Paid' && (
+                            <button 
+                                onClick={handleMarkAsPaid} 
+                                className="update-button" 
+                                style={{marginTop: '15px', backgroundColor: '#28a745', width: 'auto', padding: '8px 20px'}}
+                                disabled={loading}
+                            >
+                                Verify & Mark as Paid
+                            </button>
+                        )}
+                        </div>
+                        <p><strong>total Price :</strong>{Math.round(totalPrice)}</p>
                     <div className="pdf-actions">
                         <button onClick={handleGeneratePackingSlip} className="update-button">Generate Packing Slip</button>
                         <button onClick={handleGenerateInvoice} className="update-button">Generate Invoice</button>

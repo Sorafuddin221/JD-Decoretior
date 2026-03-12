@@ -23,6 +23,18 @@ const paymentSettingsSchema = new mongoose.Schema({
     type: Number,
     default: 10000,
   },
+  bkashNumber: {
+    type: String,
+    default: "01XXXXXXXXX"
+  },
+  bkashInstructions: {
+    type: String,
+    default: "Please Send Money to this number and provide TrxID below."
+  },
+  securityDepositPercentage: {
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true });
 
 export default mongoose.models.PaymentSettings || mongoose.model('PaymentSettings', paymentSettingsSchema);

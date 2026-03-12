@@ -96,6 +96,20 @@ const orderSchema=new mongoose.Schema({
             },
             val_id: {
                 type: String 
+            },
+            method: {
+                type: String, // 'bkash', 'cod', etc.
+                default: 'cod'
+            },
+            bkashNumber: {
+                type: String
+            },
+            trxID: {
+                type: String
+            },
+            paidAmount: {
+                type: Number,
+                default: 0
             }
         },
         paidAt:{

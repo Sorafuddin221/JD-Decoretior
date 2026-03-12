@@ -151,6 +151,22 @@ export const updateOrderStatus = createAsyncThunk('admin/updateOrderStatus', asy
     }
 })
 
+//|update payment status
+export const updatePaymentStatus = createAsyncThunk('admin/updatePaymentStatus', async ({orderId,status, paidAmount}, { rejectWithValue }) => {
+    try {
+         const config = {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const { data } = await api.put(`/api/admin/order/${orderId}/payment`,{status, paidAmount},config)
+        return data;
+
+    } catch (error) {
+        return rejectWithValue(error.response?.data || 'Failed to Update Payment status')
+    }
+})
+
 //|Fetch All Reviews
 export const fetchProductReviews = createAsyncThunk('admin/fetchProductReviews', async (productId, { rejectWithValue }) => {
     try {
@@ -405,6 +421,22 @@ const adminSlice = createSlice({
             })
 
             builder
+            .addCase(updatePaymentStatus.pending, (state) => {
+                state.loading = true,
+                    state.error = null
+            })
+            .addCase(updatePaymentStatus.fulfilled, (state, action) => {
+                state.loading = false,
+                    state.success = action.payload.success
+                state.order = action.payload.order
+
+            })
+            .addCase(updatePaymentStatus.rejected, (state, action) => {
+                state.loading = false,
+                    state.error = action.payload?.message || 'Failed to Update Payment status'
+            })
+
+            builder
             .addCase(fetchProductReviews.pending, (state) => {
                 state.loading = true,
                     state.error = null
@@ -438,4 +470,5 @@ const adminSlice = createSlice({
     }
 })
 export const { removeErrors, removeSuccess,clearMessage, setUser } = adminSlice.actions
+export { updatePaymentStatus };
 export default adminSlice.reducer

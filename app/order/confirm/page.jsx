@@ -15,12 +15,12 @@ function OrderConfirmPage() {
     const { shippingInfo, cartItems } = useSelector(state => state.cart);
     const { user } = useSelector(state => state.user);
 
-    // Load payment settings from localStorage
+    // Load payment settings from API
     const [paymentSettings, setPaymentSettings] = useState({
         taxPercentage: 0,
-        insideDhakaShippingCost: 0,
-        outsideDhakaShippingCost: 0,
+        shippingZones: [],
         freeShippingThreshold: 10000,
+        securityDepositPercentage: 0,
     });
     const [loading, setLoading] = useState(true);
 
@@ -31,9 +31,9 @@ function OrderConfirmPage() {
                 const data = await res.json();
                 setPaymentSettings({
                     taxPercentage: data.taxPercentage || 0,
-                    insideDhakaShippingCost: data.insideDhakaShippingCost || 0,
-                    outsideDhakaShippingCost: data.outsideDhakaShippingCost || 0,
+                    shippingZones: data.shippingZones || [],
                     freeShippingThreshold: data.freeShippingThreshold || 10000,
+                    securityDepositPercentage: data.securityDepositPercentage || 0,
                 });
             } catch (error) {
                 toast.error("Error fetching payment settings");
@@ -59,7 +59,13 @@ function OrderConfirmPage() {
     }, 0);
 
     const securityDepositTotal = cartItems.reduce((acc, item) => {
-        return acc + ((item.securityDeposit || 0) * item.quantity);
+        const days = calculateDays(item.startDate, item.endDate);
+        const itemRentalTotal = item.price * item.quantity * days;
+        // Use individual item deposit if set (>0), otherwise use global percentage
+        const deposit = item.securityDeposit > 0 
+            ? (item.securityDeposit * item.quantity) 
+            : (itemRentalTotal * (paymentSettings.securityDepositPercentage / 100));
+        return acc + deposit;
     }, 0);
     
     // Dynamic Tax Calculation
@@ -67,12 +73,10 @@ function OrderConfirmPage() {
 
     // Dynamic Shipping Charges Calculation
     const isFreeShipping = subtotal >= (paymentSettings.freeShippingThreshold || 10000);
-    const shippingCharges = isFreeShipping ? 0 :
-        (shippingInfo.shippingMethod === 'inside' 
-            ? paymentSettings.insideDhakaShippingCost 
-            : paymentSettings.outsideDhakaShippingCost);
+    const selectedZone = paymentSettings.shippingZones ? paymentSettings.shippingZones.find(z => z.name === shippingInfo.shippingMethod) : null;
+    const shippingCharges = isFreeShipping ? 0 : (selectedZone ? selectedZone.cost : 0);
 
-    const total = subtotal + securityDepositTotal + tax + shippingCharges;
+    const total = Math.round(subtotal + securityDepositTotal + tax + shippingCharges);
 
     const router = useRouter();
     const dispatch = useDispatch();
@@ -103,7 +107,7 @@ function OrderConfirmPage() {
             itemPrice: subtotal,
             taxPrice: tax,
             shippingPrice: shippingCharges,
-            totalPrice: total,
+            totalPrice: Math.round(total),
         };
 
         sessionStorage.setItem('orderData', JSON.stringify(orderData));
@@ -147,8 +151,11 @@ function OrderConfirmPage() {
                         <tbody>
                             {cartItems.map((item) => {
                                 const days = calculateDays(item.startDate, item.endDate);
-                                const deposit = (item.securityDeposit || 0) * item.quantity;
                                 const itemRentalTotal = item.price * item.quantity * days;
+                                const deposit = item.securityDeposit > 0 
+                                    ? (item.securityDeposit * item.quantity) 
+                                    : (itemRentalTotal * (paymentSettings.securityDepositPercentage / 100));
+                                
                                 return (
                                     <tr key={item.product}>
                                         <td><img src={item.image} alt={item.name} className='item-image' /></td>
@@ -187,7 +194,7 @@ function OrderConfirmPage() {
                                     <td>TK {securityDepositTotal.toFixed(2)}</td>
                                     <td>{isFreeShipping ? <span style={{color: 'green', fontWeight: 'bold'}}>FREE</span> : `TK ${shippingCharges.toFixed(2)}`}</td>
                                     <td>TK {tax.toFixed(2)}</td>
-                                    <td>TK {total.toFixed(2)}</td>
+                                    <td>TK {total}</td>
                                 </tr>
                             )}
                         </tbody>

@@ -6,7 +6,7 @@ import handleAsyncError from '@/middleware/handleAsyncError';
 export const POST = handleAsyncError(async (request) => {
   await db();
   const body = await request.json();
-  const { taxPercentage, shippingZones, freeShippingThreshold, activeDivisions, activeDistricts } = body;
+  const { taxPercentage, shippingZones, freeShippingThreshold, activeDivisions, activeDistricts, bkashNumber, bkashInstructions, securityDepositPercentage } = body;
 
   let settings = await PaymentSettings.findOne();
 
@@ -17,6 +17,9 @@ export const POST = handleAsyncError(async (request) => {
     settings.freeShippingThreshold = freeShippingThreshold;
     settings.activeDivisions = activeDivisions;
     settings.activeDistricts = activeDistricts;
+    settings.bkashNumber = bkashNumber;
+    settings.bkashInstructions = bkashInstructions;
+    settings.securityDepositPercentage = securityDepositPercentage;
     await settings.save();
   } else {
     // Create new settings
@@ -26,6 +29,9 @@ export const POST = handleAsyncError(async (request) => {
       freeShippingThreshold,
       activeDivisions,
       activeDistricts,
+      bkashNumber,
+      bkashInstructions,
+      securityDepositPercentage,
     });
   }
 

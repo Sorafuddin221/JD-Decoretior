@@ -12,6 +12,10 @@ export const getInvoiceHTML = (order, settings) => {
         ? `${new Date(startDate).toLocaleDateString()} to ${new Date(endDate).toLocaleDateString()}`
         : 'N/A';
 
+    const paidAmount = paymentInfo?.paidAmount || 0;
+    const dueAmount = (totalPrice || 0) - (paidAmount || 0);
+    const paymentStatus = (paymentInfo?.status === 'Paid' || paymentInfo?.status === 'succeeded') ? 'Paid' : (paidAmount > 0 ? 'Partial' : 'Unpaid');
+
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -126,7 +130,7 @@ export const getInvoiceHTML = (order, settings) => {
                 <div class="invoice-details">
                     <p><strong>Invoice ID:</strong> #${_id}</p>
                     <p><strong>Date:</strong> ${modernDate}</p>
-                    <p><strong>Status:</strong> ${paymentInfo?.status === 'succeeded' ? 'Paid' : 'Unpaid'}</p>
+                    <p><strong>Status:</strong> <span style="color: ${paymentStatus === 'Paid' ? '#27ae60' : (paymentStatus === 'Partial' ? '#f39c12' : '#e74c3c')}; font-weight: bold;">${paymentStatus}</span></p>
                 </div>
             </div>
 
@@ -174,7 +178,9 @@ export const getInvoiceHTML = (order, settings) => {
                 <p><strong>Tax:</strong> TK ${taxPrice.toFixed(2)}</p>
                 <p><strong>Shipping:</strong> TK ${shippingPrice.toFixed(2)}</p>
                 <div style="border-top: 2px solid #eee; margin-top: 10px; padding-top: 10px;">
-                    <p class="grand-total"><strong>Total Amount:</strong> TK ${totalPrice.toFixed(2)}</p>
+                    <p class="grand-total"><strong>Total Amount:</strong> TK ${Math.round(totalPrice)}</p>
+                    <p style="color: #27ae60; font-size: 1.1em;"><strong>Paid Amount:</strong> TK ${paidAmount.toFixed(2)}</p>
+                    <p style="color: #e74c3c; font-size: 1.1em;"><strong>Due Amount:</strong> TK ${Math.round(dueAmount)}</p>
                 </div>
             </div>
             <div class="footer">

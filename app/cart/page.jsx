@@ -21,6 +21,7 @@ function CartPage() {
         taxPercentage: 0,
         shippingZones: [],
         freeShippingThreshold: 10000,
+        securityDepositPercentage: 0,
     });
     const [loading, setLoading] = useState(true);
     useEffect(() => {
@@ -33,6 +34,7 @@ function CartPage() {
                     taxPercentage: data.taxPercentage || 0,
                     shippingZones: data.shippingZones || [],
                     freeShippingThreshold: data.freeShippingThreshold || 10000,
+                    securityDepositPercentage: data.securityDepositPercentage || 0,
                 });
             } catch (error) {
                 toast.error("Error fetching payment settings");
@@ -57,7 +59,13 @@ function CartPage() {
     }, 0);
 
     const securityDepositTotal = cartItems.reduce((acc, item) => {
-        return acc + ((item.securityDeposit || 0) * item.quantity);
+        const days = calculateDays(item.startDate, item.endDate);
+        const itemRentalTotal = item.price * item.quantity * days;
+        // Use individual item deposit if set (>0), otherwise use global percentage
+        const deposit = item.securityDeposit > 0 
+            ? (item.securityDeposit * item.quantity) 
+            : (itemRentalTotal * (paymentSettings.securityDepositPercentage / 100));
+        return acc + deposit;
     }, 0);
     
     // Dynamic Tax Calculation
@@ -68,7 +76,7 @@ function CartPage() {
     const zoneData = paymentSettings.shippingZones.find(z => z.name === selectedZone);
     const currentShippingCharges = isFreeShipping ? 0 : (zoneData ? zoneData.cost : 0);
 
-    const total = subtotal + securityDepositTotal + tax + currentShippingCharges;
+    const total = Math.round(subtotal + securityDepositTotal + tax + currentShippingCharges);
 
     const router = useRouter();
     const checkoutHandler = () => {
@@ -168,7 +176,7 @@ function CartPage() {
                             )}
                             <div className="summary-total">
                                 <p className="total-label">Total Amount</p>
-                                <p className="total-value">TK {total.toFixed(2)}</p>
+                                <p className="total-value">TK {total}</p>
                             </div>
                         </>}
                         <button className="checkout-btn" onClick={checkoutHandler} disabled={loading}>

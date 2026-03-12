@@ -40,10 +40,13 @@ function OrderDetailsPage({ params }) {
         endDate,
         totalDays,
         securityDepositTotal
-    } = order;
+    } = order || {};
 
+    const paidAmount = paymentInfo?.paidAmount || 0;
+    const dueAmount = (totalPrice || 0) - (paidAmount || 0);
+    const isFullyPaid = paymentInfo?.status === 'Paid' || paymentInfo?.status === 'succeeded';
     const orderStatusClass = orderStatus === 'delivered' ? 'status-tag delivered' : `status-tag ${orderStatus?.toLowerCase()}`;
-    const paymentStatusClass = `pay-tag ${paymentInfo?.status === 'succeeded' ? 'paid' : 'not-paid'}`;
+    const paymentStatusClass = `pay-tag ${isFullyPaid ? 'paid' : (paidAmount > 0 ? 'partial' : 'not-paid')}`;
 
     return (
 
@@ -164,6 +167,18 @@ function OrderDetailsPage({ params }) {
                                     <th className="table-cell">Total price :-</th>
                                     <td className='table-cell'>
                                         TK {totalPrice}
+                                    </td>                           
+                                </tr>
+                                <tr className="table-row">
+                                    <th className="table-cell">Paid Amount :-</th>
+                                    <td className='table-cell' style={{color: '#28a745', fontWeight: 'bold'}}>
+                                        TK {paidAmount}
+                                    </td>                           
+                                </tr>
+                                <tr className="table-row">
+                                    <th className="table-cell">Due Amount :-</th>
+                                    <td className='table-cell' style={{color: '#dc3545', fontWeight: 'bold'}}>
+                                        TK {dueAmount.toFixed(2)}
                                     </td>                           
                                 </tr>
                             </tbody>

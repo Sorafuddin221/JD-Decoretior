@@ -13,6 +13,26 @@ import { clearCart } from '@/features/cart/cartSlice';
 
 function PaymentPage() {
     const orderData = typeof window !== 'undefined' && sessionStorage.getItem('orderData') ? JSON.parse(sessionStorage.getItem('orderData')) : null;
+    const [settings, setSettings] = useState({ bkashNumber: '01XXXXXXXXX', bkashInstructions: '' });
+
+    // Fetch settings
+    React.useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const response = await fetch('/api/payment-settings');
+                if (response.ok) {
+                    const data = await response.json();
+                    setSettings({
+                        bkashNumber: data.bkashNumber || '01XXXXXXXXX',
+                        bkashInstructions: data.bkashInstructions || 'Please Send Money to this number and provide TrxID below.'
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching payment settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     // Filter orderData to only send necessary information to the backend for order creation
     const filteredOrderData = orderData ? {
@@ -29,6 +49,10 @@ function PaymentPage() {
         endDate: orderData.endDate,
         totalDays: orderData.totalDays,
         securityDepositTotal: orderData.securityDepositTotal,
+        itemPrice: orderData.itemPrice,
+        taxPrice: orderData.taxPrice,
+        shippingPrice: orderData.shippingPrice,
+        totalPrice: orderData.totalPrice,
         paymentInfo: orderData.paymentInfo,
     } : null;
 
@@ -36,6 +60,9 @@ function PaymentPage() {
     const router = useRouter();
     const dispatch = useDispatch();
     const [paymentMethod, setPaymentMethod] = useState('cod');
+    const [bkashNumber, setBkashNumber] = useState('');
+    const [trxID, setTrxID] = useState('');
+    const [paidAmount, setPaidAmount] = useState('');
 
     const completePayment = async () => {
         if (!filteredOrderData) {
@@ -44,40 +71,59 @@ function PaymentPage() {
             return;
         }
 
-        if (paymentMethod === 'cod') {
-            try {
-                const resultAction = await dispatch(createOrder(filteredOrderData));
-                if (createOrder.fulfilled.match(resultAction)) {
-                    toast.success('Order Confirmed (COD)!', { position: 'top-center', autoClose: 3000 });
-                    dispatch(clearCart());
-                    sessionStorage.removeItem('orderData'); // Clear orderData after successful creation
-                    sessionStorage.setItem('orderItem', JSON.stringify(resultAction.payload.order)); // Store created order
-                    router.push('/paymentSuccess?method=cod');
-                } else {
-                    toast.error(resultAction.payload?.message || 'Order creation failed (COD)', {
-                        position: 'top-center',
-                        autoClose: 3000,
-                    });
-                    sessionStorage.removeItem('orderData'); // Clear orderData even on failure
-                }
-            } catch (error) {
-                console.error("Failed to create order (COD):", error);
-                toast.error('Something went wrong during COD order creation', {
+        // Validate bKash details if selected
+        if (paymentMethod === 'bkash') {
+            if (!bkashNumber || bkashNumber.length < 11) {
+                toast.error('Please enter a valid bKash number', { position: 'top-center' });
+                return;
+            }
+            if (!trxID || trxID.length < 8) {
+                toast.error('Please enter a valid Transaction ID', { position: 'top-center' });
+                return;
+            }
+            if (!paidAmount || Number(paidAmount) <= 0) {
+                toast.error('Please enter the amount you paid', { position: 'top-center' });
+                return;
+            }
+        }
+
+        const finalOrderData = {
+            ...filteredOrderData,
+            paymentInfo: {
+                ...filteredOrderData.paymentInfo,
+                method: paymentMethod,
+                bkashNumber: paymentMethod === 'bkash' ? bkashNumber : undefined,
+                trxID: paymentMethod === 'bkash' ? trxID : undefined,
+                paidAmount: paymentMethod === 'bkash' ? Number(paidAmount) : 0,
+                status: paymentMethod === 'cod' ? 'Processing' : 'Pending Verification'
+            }
+        };
+
+        try {
+            const resultAction = await dispatch(createOrder(finalOrderData));
+            if (createOrder.fulfilled.match(resultAction)) {
+                toast.success(paymentMethod === 'cod' ? 'Order Confirmed (COD)!' : 'bKash Payment Submitted!', { position: 'top-center', autoClose: 3000 });
+                dispatch(clearCart());
+                sessionStorage.removeItem('orderData');
+                sessionStorage.setItem('orderItem', JSON.stringify(resultAction.payload.order));
+                router.push(`/paymentSuccess?method=${paymentMethod}`);
+            } else {
+                toast.error(resultAction.payload?.message || 'Order creation failed', {
                     position: 'top-center',
                     autoClose: 3000,
                 });
             }
-        } else {
-            // For any other payment methods, this would be where integration with a payment gateway happens.
-            // For now, it will indicate that only COD is supported.
-            toast.info('Only Cash on Delivery is supported at the moment.', { position: 'top-center', autoClose: 3000 });
+        } catch (error) {
+            console.error("Failed to create order:", error);
+            toast.error('Something went wrong during order creation', {
+                position: 'top-center',
+                autoClose: 3000,
+            });
         }
     };
 
     // If orderData is not available, redirect or show an error
     if (!orderData) {
-        // This scenario should ideally not happen if navigation is controlled.
-        // You might want a more robust error handling or redirection.
         return (
             <>
                 <PageTitle title="Payment Error" />
@@ -91,30 +137,81 @@ function PaymentPage() {
 
     return (
         <>
-            <PageTitle title="Payment Processing " />
+            <PageTitle title="Payment Processing" />
             <CheckoutPath activePath={2} />
             <div className="payment-container">
                 <div className="payment-methods">
                     <h3>Select Payment Method</h3>
-                    <div>
+                    
+                    <div 
+                        className={`method-option ${paymentMethod === 'cod' ? 'selected' : ''}`}
+                        onClick={() => setPaymentMethod('cod')}
+                    >
                         <input
                             type="radio"
                             id="cod"
                             name="paymentMethod"
                             value="cod"
                             checked={paymentMethod === 'cod'}
-                            onChange={() => setPaymentMethod('cod')}
+                            readOnly
                         />
-                        <label htmlFor="cod">Cash on Delivery</label>
+                        <label htmlFor="cod">Cash on Delivery (COD)</label>
                     </div>
-                </div>
-            </div>
-            <div className="payment-container">
-                <Link href={"/order/confirm"} className='payment-go-back'>Go Back</Link>
 
-                <button className="payment-btn" onClick={completePayment}>
-                    Confirm Order
-                </button>
+                    <div 
+                        className={`method-option ${paymentMethod === 'bkash' ? 'selected' : ''}`}
+                        onClick={() => setPaymentMethod('bkash')}
+                    >
+                        <input
+                            type="radio"
+                            id="bkash"
+                            name="paymentMethod"
+                            value="bkash"
+                            checked={paymentMethod === 'bkash'}
+                            readOnly
+                        />
+                        <label htmlFor="bkash">bKash (Send Money)</label>
+                    </div>
+
+                    {paymentMethod === 'bkash' && (
+                        <div className="bkash-form">
+                            <div className="bkash-instructions">
+                                <p>Please <strong>Send Money</strong> to this number:</p>
+                                <p style={{fontSize: '1.2rem', margin: '5px 0'}}><strong>{settings.bkashNumber}</strong> (Personal)</p>
+                                <p>Amount: <strong>৳{filteredOrderData?.totalPrice}</strong></p>
+                                <p>{settings.bkashInstructions}</p>
+                            </div>
+                            <div className="bkash-input-group">
+                                <input 
+                                    type="text" 
+                                    placeholder="Your bKash Number (e.g. 017...)" 
+                                    value={bkashNumber}
+                                    onChange={(e) => setBkashNumber(e.target.value)}
+                                    maxLength={11}
+                                />
+                                <input 
+                                    type="text" 
+                                    placeholder="Transaction ID (TrxID)" 
+                                    value={trxID}
+                                    onChange={(e) => setTrxID(e.target.value)}
+                                />
+                                <input 
+                                    type="number" 
+                                    placeholder="Amount Paid (e.g. 500)" 
+                                    value={paidAmount}
+                                    onChange={(e) => setPaidAmount(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="payment-actions">
+                    <Link href={"/order/confirm"} className='payment-go-back'>Go Back</Link>
+                    <button className="payment-btn" onClick={completePayment}>
+                        Confirm Order
+                    </button>
+                </div>
             </div>
         </>
     );

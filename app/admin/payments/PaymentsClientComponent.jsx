@@ -9,6 +9,9 @@ function PaymentsClientComponent() {
   const [freeShippingThreshold, setFreeShippingThreshold] = useState(10000);
   const [activeDivisions, setActiveDivisions] = useState(["Rajshahi"]);
   const [activeDistricts, setActiveDistricts] = useState(["Naogaon"]);
+  const [bkashNumber, setBkashNumber] = useState('');
+  const [bkashInstructions, setBkashInstructions] = useState('');
+  const [securityDepositPercentage, setSecurityDepositPercentage] = useState(0);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -22,6 +25,9 @@ function PaymentsClientComponent() {
             setFreeShippingThreshold(data.freeShippingThreshold || 10000);
             setActiveDivisions(data.activeDivisions?.length > 0 ? data.activeDivisions : ["Rajshahi"]);
             setActiveDistricts(data.activeDistricts?.length > 0 ? data.activeDistricts : ["Naogaon"]);
+            setBkashNumber(data.bkashNumber || '');
+            setBkashInstructions(data.bkashInstructions || '');
+            setSecurityDepositPercentage(data.securityDepositPercentage || 0);
           }
         }
       } catch (error) {
@@ -61,6 +67,9 @@ function PaymentsClientComponent() {
       freeShippingThreshold: Number(freeShippingThreshold),
       activeDivisions,
       activeDistricts,
+      bkashNumber,
+      bkashInstructions,
+      securityDepositPercentage: Number(securityDepositPercentage),
     };
 
     try {
@@ -130,6 +139,51 @@ function PaymentsClientComponent() {
             <button type="button" onClick={() => setActiveDistricts([...activeDistricts, ""])} style={{ fontSize: '12px', background: '#eee', border: '1px solid #ccc', padding: '2px 8px', borderRadius: '4px', cursor: 'pointer' }}>+ Add District</button>
           </div>
           <p style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>* Customers will only see these options on the shipping page.</p>
+        </div>
+
+        <div className="form-group" style={{ background: '#fff0f6', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #ffd6e7' }}>
+          <h4 style={{ marginBottom: '15px', color: '#d12053' }}>bKash Payment Settings</h4>
+          <div style={{ marginBottom: '15px' }}>
+            <label htmlFor="bkashNumber">bKash Number (Personal/Merchant):</label>
+            <input
+              type="text"
+              id="bkashNumber"
+              value={bkashNumber}
+              onChange={(e) => setBkashNumber(e.target.value)}
+              placeholder="e.g. 017XXXXXXXX"
+              style={{ border: '1px solid #ffadd2' }}
+            />
+          </div>
+          <div>
+            <label htmlFor="bkashInstructions">Instructions for Customers:</label>
+            <textarea
+              id="bkashInstructions"
+              value={bkashInstructions}
+              onChange={(e) => setBkashInstructions(e.target.value)}
+              placeholder="Instructions like: Please Send Money to this number..."
+              rows="3"
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ffadd2', outline: 'none' }}
+            />
+          </div>
+        </div>
+
+        <div className="form-group" style={{ background: '#e6f7ff', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #91d5ff' }}>
+          <h4 style={{ marginBottom: '15px', color: '#0050b3' }}>Security Deposit Settings</h4>
+          <div style={{ marginBottom: '10px' }}>
+            <label htmlFor="securityDepositPercentage">Security Deposit Percentage (%):</label>
+            <input
+              type="number"
+              id="securityDepositPercentage"
+              value={securityDepositPercentage}
+              onChange={(e) => setSecurityDepositPercentage(e.target.value)}
+              placeholder="e.g. 20"
+              min="0"
+              max="100"
+              step="1"
+              style={{ border: '1px solid #69c0ff' }}
+            />
+          </div>
+          <p style={{ fontSize: '12px', color: '#666' }}>* This percentage will be calculated from the total rental price and added as a refundable deposit.</p>
         </div>
 
         <div className="form-group">
