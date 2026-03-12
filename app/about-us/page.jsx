@@ -10,7 +10,7 @@ function AboutUs() {
         <section className="about-us-section">
           <h1>Our Story</h1>
           <p>
-            Welcome to My YaMart Family! We started this journey with a simple mission: to provide high-quality products that bring joy and convenience to your daily life. What began as a small passion project has grown into a thriving online store, serving customers with a diverse range of products that are carefully curated for their quality and value.
+            Welcome to My JIBON DECORETOR Family! We started this journey with a simple mission: to provide high-quality products that bring joy and convenience to your daily life. What began as a small passion project has grown into a thriving online store, serving customers with a diverse range of products that are carefully curated for their quality and value.
           </p>
         </section>
 
@@ -49,7 +49,7 @@ function AboutUs() {
         <section className="about-us-section">
           <h2>Connect with Us</h2>
           <p>
-            We love to hear from our customers! Follow us on our social media channels to stay updated on our latest products, promotions, and news. Join our community and be a part of the My YaMart family.
+            We love to hear from our customers! Follow us on our social media channels to stay updated on our latest products, promotions, and news. Join our community and be a part of the My JIBON DECORETOR family.
           </p>
           <div className="social-links">
            

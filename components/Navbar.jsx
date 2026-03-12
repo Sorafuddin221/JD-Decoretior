@@ -349,7 +349,7 @@ const Navbar = ({ settings }) => {
                                         priority
                                     />
                                 ) : (
-                                    <h1 className="main-header-title"><i className="main-header-icon"></i>YaMart</h1>
+                                    <h1 className="main-header-title"><i className="main-header-icon"></i>JIBON DECORETOR</h1>
                                 )}
                             </Link>
                         </div>
@@ -536,7 +536,7 @@ const Navbar = ({ settings }) => {
                                         priority
                                     />
                                 ) : (
-                                    <h1 className="navbar-mobile-brand-title"><i className="navbar-mobile-brand-icon"></i>YaMart BD</h1>
+                                    <h1 className="navbar-mobile-brand-title"><i className="navbar-mobile-brand-icon"></i>JIBON DECORETOR</h1>
                                 )}
                             </Link>
                             {isMobileSearchOpen ? (

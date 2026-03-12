@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 function Footer({ settings }) {
   const phoneNumber = settings?.phoneNumber || "01516143874";
-  const contactEmail = settings?.contactEmail || "yamartbd@gmail.com";
+  const contactEmail = settings?.contactEmail || "jibondecoretor@gmail.com";
   return (
     <footer className='footer'>
       <div className="footer-container">
@@ -49,11 +49,11 @@ function Footer({ settings }) {
         {/*section 4*/}
         <div className="footer-section about">
           <h3>About Us</h3>
-          <p>YaMart BD-তে আপনাকে স্বাগতম! আমরা আপনার বিশেষ দিনগুলোকে আরও রাঙিয়ে তুলতে সাশ্রয়ী মূল্যে সেরা মানের ডেকোরেশন সামগ্রী ভাড়া দিয়ে থাকি।</p>
+          <p>JIBON DECORETOR-এ আপনাকে স্বাগতম! আমরা আপনার বিশেষ দিনগুলোকে আরও রাঙিয়ে তুলতে সাশ্রয়ী মূল্যে সেরা মানের ডেকোরেশন সামগ্রী ভাড়া দিয়ে থাকি।</p>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>CopyRight &copy; 2026 YaMartBD all right reserved </p>
+        <p>CopyRight &copy; 2026 JIBON DECORETOR all right reserved </p>
       </div>
     </footer>
   )

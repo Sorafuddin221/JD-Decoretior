@@ -11,7 +11,7 @@ import '../../pageStyles/Support.css';
 const SupportPage = () => {
     return (
         <>
-            <PageTitle title="How to Order - YaMart BD" />
+            <PageTitle title="How to Order - JIBON DECORETOR" />
             <div className="support-container">
                 <header className="support-header">
                     <h1>How to Order - কিভাবে অর্ডার করবেন</h1>

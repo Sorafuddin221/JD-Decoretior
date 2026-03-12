@@ -5,7 +5,7 @@ import '../../pageStyles/PolicyStyles.css';
 const TermsAndConditions = () => {
     return (
         <>
-            <PageTitle title="Terms & Conditions - YaMart BD" />
+            <PageTitle title="Terms & Conditions - JIBON DECORETOR" />
             <div className="policy-container">
                 <header className="policy-header">
                     <h1>Terms and Conditions</h1>

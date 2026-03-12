@@ -17,12 +17,12 @@ async function getSettings() {
   } catch (error) {
     console.error('Error fetching settings:', error);
     return {
-      siteTitle: "YaMart Bd",
+      siteTitle: "JIBON DECORETOR",
       siteLogoUrl: "",
       siteFaviconUrl: "",
       textIcon: "",
       phoneNumber: "01516143874",
-      contactEmail: "yamartbd@gmail.com",
+      contactEmail: "jibondecoretor@gmail.com",
     };
   }
 }

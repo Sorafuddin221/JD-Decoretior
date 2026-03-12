@@ -20,7 +20,7 @@ const settingsSchema = new mongoose.Schema({
   },
   contactEmail: {
     type: String,
-    default: "yamartbd@gmail.com",
+    default: "jibondecoretor@gmail.com",
   },
 }, { timestamps: true });
 

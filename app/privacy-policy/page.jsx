@@ -5,7 +5,7 @@ import '../../pageStyles/PolicyStyles.css';
 const PrivacyPolicy = () => {
     return (
         <>
-            <PageTitle title="Privacy Policy - YaMart BD" />
+            <PageTitle title="Privacy Policy - JIBON DECORETOR" />
             <div className="policy-container">
                 <header className="policy-header">
                     <h1>Privacy Policy</h1>

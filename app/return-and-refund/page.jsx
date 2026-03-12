@@ -5,7 +5,7 @@ import '../../pageStyles/PolicyStyles.css';
 const ReturnAndRefund = () => {
     return (
         <>
-            <PageTitle title="Return & Refund - YaMart BD" />
+            <PageTitle title="Return & Refund - JIBON DECORETOR" />
             <div className="policy-container">
                 <header className="policy-header">
                     <h1>Return & Refund Policy</h1>

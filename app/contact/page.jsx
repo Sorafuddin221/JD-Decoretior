@@ -78,7 +78,7 @@ function ContactUs() {
           </div>
           <div className="address-item">
             <EmailIcon className="icon" />
-            <p>yamartbd@gmail.com</p>
+            <p>jibondecoretor@gmail.com</p>
           </div>
         </div>
       </div>

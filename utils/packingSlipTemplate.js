@@ -105,7 +105,7 @@ export const getPackingSlipHTML = (order, settings) => {
         <div class="container">
             <div class="header">
                 <div class="company-details">
-                    ${settings.siteLogoUrl ? `<img src="${settings.siteLogoUrl}" alt="YaMart BD" style="max-height: 50px; margin-bottom: 10px;">` : ''}
+                    ${settings.siteLogoUrl ? `<img src="${settings.siteLogoUrl}" alt="JIBON DECORETOR" style="max-height: 50px; margin-bottom: 10px;">` : ''}
                     <p><strong>${settings.siteTitle}</strong></p>
                     <p>Gazipur, Dhaka, Bangladesh</p>
                 </div>

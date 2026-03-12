@@ -32,7 +32,7 @@ function GeneralSettingsClientComponent() {
             setSiteFaviconUrl(data.siteFaviconUrl || '');
             setTextIcon(data.textIcon || '');
             setPhoneNumber(data.phoneNumber || '01516143874');
-            setContactEmail(data.contactEmail || 'yamartbd@gmail.com');
+            setContactEmail(data.contactEmail || 'jibondecoretor@gmail.com');
           }
         }
       } catch (error) {
