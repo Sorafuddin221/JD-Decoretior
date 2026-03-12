@@ -1,4 +1,11 @@
-'use client';
+import db from '@/lib/db';
+import Slide from '@/models/slideModel';
+
+async function getSlides() {
+  await db();
+  const slides = await Slide.find({});
+  return JSON.parse(JSON.stringify(slides));
+}
 
 import React from 'react';
 import InfoSection from '@/components/InfoSection';
@@ -12,12 +19,14 @@ import HomepageOfferAfterTopProducts from '@/components/HomepageOfferAfterTopPro
 import SpecialOfferSection from '@/components/SpecialOfferSection';
 import '@/pageStyles/Home.css';
 
-export default function Home() {
+export default async function Home() {
+  const initialSlides = await getSlides();
+
   return (
     <>
       <div className="hero-section-wrapper">
         <div className="main-slider-container">
-          <ImageSlider />
+          <ImageSlider initialSlides={initialSlides} />
         </div>
         <div className="special-offer-container">
           <SpecialOfferSection />

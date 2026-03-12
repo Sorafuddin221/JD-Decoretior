@@ -2,73 +2,68 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../componentStyles/ImageSlider.css';
 
-const defaultSlidesData = [
-  { imageUrl: '/images/img-1.jpg', buttonUrl: '#' },
-  { imageUrl: '/images/img-2.jpg', buttonUrl: '#' },
-  { imageUrl: '/images/img-3.jpg', buttonUrl: '#' },
-  { imageUrl: '/images/img-4.jpg', buttonUrl: '#' },
-];
-
-function ImageSlider() {
-  const [slides, setSlides] = useState(defaultSlidesData);
+function ImageSlider({ initialSlides = [] }) {
+  const [slides, setSlides] = useState(initialSlides);
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const sliderRef = useRef(null);
 
   useEffect(() => {
-    const fetchSlides = async () => {
-      try {
-        const response = await fetch('/api/slides');
-        if (response.ok) {
-          const data = await response.json();
-          if (data && data.length > 0) {
-            setSlides(data);
+    // If we don't have initialSlides (e.g. CSR navigation), fetch them
+    if (!initialSlides || initialSlides.length === 0) {
+      const fetchSlides = async () => {
+        try {
+          const response = await fetch('/api/slides');
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.length > 0) {
+              setSlides(data);
+            }
           }
+        } catch (error) {
+          console.error('Error fetching slides:', error);
         }
-      } catch (error) {
-        console.error('Error fetching slides:', error);
-      }
-    };
+      };
+      fetchSlides();
+    }
+  }, [initialSlides]);
 
-    fetchSlides();
-  }, []);
+  // If still no slides after check, return null or a skeleton to avoid showing old hardcoded images
+  if (slides.length === 0) {
+    return <div className="image-slider-container loading"></div>;
+  }
 
   // Create extended slides for infinite loop effect
-  const extendedSlides = slides.length > 0
-    ? [slides[slides.length - 1], ...slides, slides[0]]
-    : defaultSlidesData; // Fallback if slides are still empty somehow
+  const extendedSlides = [slides[slides.length - 1], ...slides, slides[0]];
 
   useEffect(() => {
-    if (slides.length > 0) { // Only set interval if there are slides
+    if (slides.length > 1) { 
       const interval = setInterval(() => {
         setCurrentIndex((prevIndex) => prevIndex + 1);
-      }, 5000); // 5 seconds interval
+      }, 5000); 
 
       return () => clearInterval(interval);
     }
-  }, [slides.length]); // Re-run effect if number of slides changes
+  }, [slides.length]);
 
   useEffect(() => {
-    if (slides.length > 0) { // Only run carousel logic if there are slides
+    if (slides.length > 0) {
       if (currentIndex === extendedSlides.length - 1) {
-        // If last extended slide, smoothly transition to the first real slide (index 1)
         setTimeout(() => {
           setIsTransitioning(false);
           setCurrentIndex(1);
-        }, 500); // Transition duration
+        }, 500);
       } else if (currentIndex === 0) {
-        // If first extended slide, smoothly transition to the last real slide (index slides.length)
         setTimeout(() => {
           setIsTransitioning(false);
           setCurrentIndex(slides.length);
-        }, 500); // Transition duration
+        }, 500);
       }
     }
-  }, [currentIndex, extendedSlides.length, slides.length]); // Dependencies for carousel logic
+  }, [currentIndex, extendedSlides.length, slides.length]);
 
   useEffect(() => {
     if (!isTransitioning) {
-      // After jump, re-enable transition for next slide
       setTimeout(() => {
         setIsTransitioning(true);
       }, 50);
@@ -76,7 +71,7 @@ function ImageSlider() {
   }, [isTransitioning]);
 
   const goToSlide = (index) => {
-    setCurrentIndex(index + 1); // Adjust for extended slides
+    setCurrentIndex(index + 1);
   };
 
   return (
@@ -102,7 +97,7 @@ function ImageSlider() {
         ))}
       </div>
       <div className="slider-dots">
-        {slides.map((_, index) => ( // Dots correspond to actual number of unique slides
+        {slides.map((_, index) => (
           <span
             key={index}
             className={`dot ${currentIndex === index + 1 ? 'active' : ''}`}
