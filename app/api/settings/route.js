@@ -9,7 +9,6 @@ import { revalidatePath } from 'next/cache';
 export const GET = handleAsyncError(async () => {
   await db();
   const settings = await Settings.findOne({});
-  console.log("FETCHED SETTINGS FROM DB:", settings);
   return NextResponse.json(settings || {});
 });
 
@@ -22,13 +21,11 @@ export const POST = handleAsyncError(async (req) => {
 
   const body = await req.json();
   const { siteTitle, siteLogoUrl, siteFaviconUrl, textIcon, phoneNumber, contactEmail } = body;
-  console.log("RECEIVED SETTINGS TO SAVE:", body);
 
   await db();
   let settings = await Settings.findOne({});
   
   if (!settings) {
-    console.log("CREATING NEW SETTINGS DOCUMENT");
     settings = new Settings({
       siteTitle,
       siteLogoUrl,
@@ -38,7 +35,6 @@ export const POST = handleAsyncError(async (req) => {
       contactEmail,
     });
   } else {
-    console.log("UPDATING EXISTING SETTINGS DOCUMENT ID:", settings._id);
     settings.siteTitle = siteTitle;
     settings.siteLogoUrl = siteLogoUrl;
     settings.siteFaviconUrl = siteFaviconUrl;
@@ -48,7 +44,6 @@ export const POST = handleAsyncError(async (req) => {
   }
 
   const savedSettings = await settings.save();
-  console.log("SAVED SETTINGS IN DB:", savedSettings);
   
   revalidatePath('/');
   revalidatePath('/admin/settings');

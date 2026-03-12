@@ -30,6 +30,8 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
     const [mounted, setMounted] = useState(false); // New state for hydration fix
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [availableStock, setAvailableStock] = useState(null);
+    const [availabilityLoading, setAvailabilityLoading] = useState(false);
 
     const { loading, error, product: reduxProduct, reviewSuccess, reviewLoading } = useSelector((state) => state.product);
     const { loading: cartLoading, error: cartError, success, message } = useSelector((state) => state.cart);
@@ -68,6 +70,34 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
         }
     }, [dispatch, success, message]);
 
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            if (startDate && endDate && product?._id) {
+                setAvailabilityLoading(true);
+                try {
+                    const response = await fetch(`/api/product/${product._id}/availability?startDate=${startDate}&endDate=${endDate}`);
+                    const data = await response.json();
+                    if (data.success) {
+                        setAvailableStock(data.availableStock);
+                        if (quantity > data.availableStock && data.availableStock > 0) {
+                            setQuantity(data.availableStock);
+                        } else if (data.availableStock === 0) {
+                            setQuantity(1);
+                        }
+                    }
+                } catch (err) {
+                    console.error("Error fetching availability:", err);
+                } finally {
+                    setAvailabilityLoading(false);
+                }
+            } else {
+                setAvailableStock(null);
+            }
+        };
+
+        fetchAvailability();
+    }, [startDate, endDate, product?._id]);
+
     const decreaseQuantity = () => {
         if (quantity <= 1) {
             toast.error('Quantity cannot be less than 1', { position: 'top-center', autoClose: 3000 });
@@ -77,7 +107,8 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
     };
 
     const increaseQuantity = () => {
-        if (product.stock <= quantity) {
+        const maxStock = availableStock !== null ? availableStock : product.stock;
+        if (maxStock <= quantity) {
             toast.error('Cannot exceed available Stock!', { position: 'top-center', autoClose: 3000 });
             return;
         }
@@ -98,6 +129,11 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
 
         if (!startDate || !endDate) {
             toast.error('Please select Start and End dates for rental.', { position: 'top-center', autoClose: 3000 });
+            return;
+        }
+
+        if (availableStock !== null && availableStock < quantity) {
+            toast.error(`Only ${availableStock} units available for these dates.`, { position: 'top-center', autoClose: 3000 });
             return;
         }
 
@@ -278,8 +314,13 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
                             </span>
                         </div>
                         <div className="stock-status">
-                            <span className={product.stock > 1 ? `in stock` : 'Out of Stock'}>
-                                {product.stock > 0 ? `in stock (${product.stock} available)` : 'Out of stock'}
+                            <span className={(availableStock !== null ? availableStock : product.stock) > 0 ? `in stock` : 'Out of Stock'}>
+                                {availabilityLoading ? 'Checking availability...' : 
+                                 (availableStock !== null ? 
+                                    (availableStock > 0 ? `Available for these dates: ${availableStock}` : 'Not available for these dates') : 
+                                    (product.stock > 0 ? `Total Capacity: ${product.stock}` : 'Out of stock')
+                                 )
+                                }
                             </span>
                         </div>
 

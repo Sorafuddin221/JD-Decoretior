@@ -5,15 +5,6 @@ import Product from '@/models/productModel';
 import { verifyUserAuth, roleBasedAccess } from '@/middleware/auth';
 import HandleError from '@/utils/handleError';
 
-async function updateStock(productId, quantity) {
-    const product = await Product.findById(productId);
-    if (!product) {
-        throw new HandleError("Product not found", 404);
-    }
-    product.stock -= quantity;
-    await product.save({ validateBeforeSave: false });
-}
-
 export async function GET(req, { params }) {
     let orderId;
     try {
@@ -73,18 +64,11 @@ export async function PUT(req, { params }) {
             return NextResponse.json({ message: "Order not found" }, { status: 404 });
         }
 
-        if (order.orderStatus === "Delivered") {
-            return NextResponse.json({ message: "You have already delivered this order" }, { status: 400 });
-        }
-
         const { status } = await req.json();
         order.orderStatus = status;
 
         if (status === "Delivered") {
             order.deliveredAt = Date.now();
-            for (const o of order.orderItems) {
-                await updateStock(o.product, o.quantity);
-            }
         }
 
         await order.save({ validateBeforeSave: false });

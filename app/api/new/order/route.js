@@ -6,17 +6,7 @@ import PaymentSettings from '@/models/paymentSettingsModel';
 import { verifyUserAuth } from '@/middleware/auth';
 import handleAsyncError from '@/middleware/handleAsyncError'; // Correct import
 
-async function updateStock(productId, quantity) {
-    const product = await Product.findById(productId);
-    if (!product) {
-        // Use custom error handler if available, or just throw
-        const error = new Error("Product not found");
-        error.statusCode = 404;
-        throw error;
-    }
-    product.stock -= quantity;
-    await product.save({ validateBeforeSave: false });
-}
+import { getAvailableStock } from '@/utils/availability';
 
 export const POST = handleAsyncError(async (request) => {
     await db(); // Connect to DB
@@ -40,6 +30,16 @@ export const POST = handleAsyncError(async (request) => {
         shippingPrice,
         totalPrice,
     } = await request.json(); // Use request.json()
+
+    // 1. Check availability for each item in the date range
+    for (const item of orderItems) {
+        const available = await getAvailableStock(item.product, startDate, endDate);
+        if (available < item.quantity) {
+            return NextResponse.json({ 
+                message: `Sorry, only ${available} units of '${item.name}' are available for the selected dates.` 
+            }, { status: 400 });
+        }
+    }
 
     const order = await Order.create({
         shippingInfo: {
@@ -67,10 +67,8 @@ export const POST = handleAsyncError(async (request) => {
         user: user._id,
     });
 
-    // Update product stock
-    for (const o of order.orderItems) {
-        await updateStock(o.product, o.quantity);
-    }
+    // We no longer decrease product.stock permanently.
+    // Stock availability is now calculated on-the-fly based on date range.
 
     return NextResponse.json({
         success: true,
