@@ -8,7 +8,7 @@ import { ToastContainer } from "react-toastify";
 async function getSettings() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_FRONTEND_URL}/api/settings`,{
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
     });
     if (!res.ok) {
       throw new Error('Failed to fetch settings');
@@ -21,6 +21,8 @@ async function getSettings() {
       siteLogoUrl: "",
       siteFaviconUrl: "",
       textIcon: "",
+      phoneNumber: "01516143874",
+      contactEmail: "yamartbd@gmail.com",
     };
   }
 }

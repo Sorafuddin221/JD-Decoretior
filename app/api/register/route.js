@@ -15,14 +15,17 @@ export async function POST(req) {
         const password = formData.get('password');
         const avatarFile = formData.get('avatar');
 
-        if (!name || !email || !password || !avatarFile) {
-            return NextResponse.json({ message: "Please enter all fields and provide an avatar" }, { status: 400 });
+        if (!name || !email || !password) {
+            return NextResponse.json({ message: "Please enter all fields" }, { status: 400 });
         }
 
-        let avatar = {};
+        let avatar = {
+            public_id: "default_avatar",
+            url: "https://res.cloudinary.com/demo/image/upload/d_avatar.png/avatar.png" // Placeholder or leave empty if your frontend handles it
+        };
 
-        // Upload avatar to Cloudinary
-        if (avatarFile) {
+        // Upload avatar to Cloudinary if provided
+        if (avatarFile && avatarFile.size > 0) {
             const arrayBuffer = await avatarFile.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
@@ -43,8 +46,6 @@ export async function POST(req) {
                 public_id: result.public_id,
                 url: result.secure_url,
             };
-        } else {
-            return NextResponse.json({ message: "Avatar is required" }, { status: 400 });
         }
         
         const user = await User.create({

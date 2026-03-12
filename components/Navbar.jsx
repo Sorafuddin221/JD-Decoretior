@@ -19,7 +19,9 @@ import Loader from './Loader';
 import '../componentStyles/Navbar.css'; // Changed to Navbar.css
 import axios from 'axios'; // Import axios for API calls
 
-const Navbar = ({ siteLogoUrl }) => {
+const Navbar = ({ settings }) => {
+    const siteLogoUrl = settings?.siteLogoUrl;
+    const phoneNumber = settings?.phoneNumber || "01516143874";
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isAllCatOpen, setIsAllCatOpen] = useState(false);
     const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
@@ -137,8 +139,7 @@ const Navbar = ({ siteLogoUrl }) => {
     const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
     const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
     const topBarLinks = [
-        { href: "help", text: "Help" },
-        { href: "support", text: "Support" },
+        { href: "/support", text: "Support" },
         { href: "/contact", text: "Contact" },
     ];
     const searchCategories = [
@@ -274,7 +275,7 @@ const Navbar = ({ siteLogoUrl }) => {
                         <div className="topbar-links-wrapper">
                             {topBarLinks.map((link, index) => (
                                 <React.Fragment key={index}>
-                                    <a href={link.href} className="topbar-link">{link.text}</a>
+                                    <Link href={link.href} className="topbar-link">{link.text}</Link>
                                     {index < topBarLinks.length - 1 && <small className="topbar-divider"> / </small>}
                                 </React.Fragment>
                             ))}
@@ -282,7 +283,7 @@ const Navbar = ({ siteLogoUrl }) => {
                     </div>
                     <div className="topbar-col-middle">
                         <small className="topbar-call-text">Call Us:</small>
-                        <a href="#" className="topbar-call-number">01516143874</a>
+                        <a href="#" className="topbar-call-number">{phoneNumber}</a>
                     </div>
                     <div className="topbar-col-right">
                         <div className="topbar-links-wrapper">
@@ -460,7 +461,7 @@ const Navbar = ({ siteLogoUrl }) => {
 
                 <div className="mobile-topbar-group mobile-topbar-call">
                     <small className="topbar-call-text">Call:</small>
-                    <a href="#" className="topbar-call-number">01516143874</a>
+                    <a href="#" className="topbar-call-number">{phoneNumber}</a>
                 </div>
                 <div className="mobile-topbar-group mobile-topbar-actions">
                     {/* Language Dropdown for mobile topbar */}
@@ -648,7 +649,7 @@ const Navbar = ({ siteLogoUrl }) => {
                                         </React.Fragment>
                                     ))}
                                 </div>
-                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i className="fa fa-mobile-alt me-2"></i> 01516143874</a>
+                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i className="fa fa-mobile-alt me-2"></i> {phoneNumber}</a>
                             </div>
                         </div>
                     </div>

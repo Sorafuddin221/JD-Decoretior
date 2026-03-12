@@ -46,7 +46,7 @@ const TrendingProducts = () => {
     if (products.length === 0) {
         return (
             <div className="home-container">
-                <h2 className="home-heading">trending new</h2>
+                <h2 className="home-heading">Trending Decor Styles</h2>
                 <p>No trending products found.</p>
             </div>
         );

@@ -52,10 +52,10 @@ export default function LayoutClient({ children, settings }) {
 
   return (
     <>
-      <Navbar siteLogoUrl={settings?.siteLogoUrl} />
+      <Navbar settings={settings} />
       {children}
       <ChatBox />
-      <Footer />
+      <Footer settings={settings} />
     </>
   );
 }

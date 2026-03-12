@@ -4,15 +4,17 @@ import {Phone,Mail, Facebook, LinkedIn, YouTube, Instagram} from '@mui/icons-mat
 import '../componentStyles/Footer.css';
 import Link from 'next/link';
 
-function Footer() {
+function Footer({ settings }) {
+  const phoneNumber = settings?.phoneNumber || "01516143874";
+  const contactEmail = settings?.contactEmail || "yamartbd@gmail.com";
   return (
     <footer className='footer'>
       <div className="footer-container">
         {/*section 1*/}
         <div className="footer-section contact">
           <h3>Contact Us</h3>
-          <p><Phone fontSize='small'/> phone: 01516143874</p>
-          <p><Mail fontSize='small'/>Email: yamartbd@gmail.com</p>
+          <p><Phone fontSize='small'/> phone: {phoneNumber}</p>
+          <p><Mail fontSize='small'/>Email: {contactEmail}</p>
         </div>
         {/*section 2*/}
         <div className="footer-section social">
@@ -37,6 +39,7 @@ function Footer() {
           <h3 className='footer-menu-title'>Footer Menu</h3>
           <ul className='footer-menu-items'>
             <li ><Link className='footer-menu-item' href="/about-us">About Us</Link></li>
+            <li ><Link className='footer-menu-item' href="/support">How to Order</Link></li>
             <li ><Link className='footer-menu-item' href="/contact">Contact Us</Link></li>
             <li ><Link className='footer-menu-item' href="/privacy-policy">Privacy Policy</Link></li>
             <li ><Link className='footer-menu-item' href="/terms-and-conditions">Terms & Conditions</Link></li>
@@ -45,8 +48,8 @@ function Footer() {
         </div>
         {/*section 4*/}
         <div className="footer-section about">
-          <h3>About</h3>
-          <p>Welcome to My YaMart BD! We started this journey with a simple mission: to provide high-quality products that bring joy and convenience to your daily life.</p>
+          <h3>About Us</h3>
+          <p>YaMart BD-তে আপনাকে স্বাগতম! আমরা আপনার বিশেষ দিনগুলোকে আরও রাঙিয়ে তুলতে সাশ্রয়ী মূল্যে সেরা মানের ডেকোরেশন সামগ্রী ভাড়া দিয়ে থাকি।</p>
         </div>
       </div>
       <div className="footer-bottom">

@@ -8,6 +8,8 @@ function GeneralSettingsClientComponent() {
   const [siteLogoUrl, setSiteLogoUrl] = useState('');
   const [siteFaviconUrl, setSiteFaviconUrl] = useState('');
   const [textIcon, setTextIcon] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
   const [loading, setLoading] = useState(true);
 
   const [logoFile, setLogoFile] = useState(null);
@@ -29,6 +31,8 @@ function GeneralSettingsClientComponent() {
             setSiteLogoUrl(data.siteLogoUrl || '');
             setSiteFaviconUrl(data.siteFaviconUrl || '');
             setTextIcon(data.textIcon || '');
+            setPhoneNumber(data.phoneNumber || '01516143874');
+            setContactEmail(data.contactEmail || 'yamartbd@gmail.com');
           }
         }
       } catch (error) {
@@ -111,6 +115,8 @@ function GeneralSettingsClientComponent() {
       siteLogoUrl: finalSiteLogoUrl,
       siteFaviconUrl: finalSiteFaviconUrl,
       textIcon,
+      phoneNumber,
+      contactEmail,
     };
 
     try {
@@ -191,6 +197,30 @@ function GeneralSettingsClientComponent() {
             value={textIcon}
             onChange={(e) => setTextIcon(e.target.value)}
             placeholder="Enter text icon"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="phoneNumber">Phone Number:</label>
+          <input
+            type="text"
+            id="phoneNumber"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="Enter phone number"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="contactEmail">Contact Email:</label>
+          <input
+            type="email"
+            id="contactEmail"
+            value={contactEmail}
+            onChange={(e) => setContactEmail(e.target.value)}
+            placeholder="Enter contact email"
+            required
           />
         </div>
 

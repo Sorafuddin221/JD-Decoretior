@@ -72,7 +72,7 @@ const HotDeals = () => {
     return (
         <section className="hot-deals-section">
         <div className="hot-deals-header">
-            <h2 className="hot-deals-title">Hot Deals</h2>
+            <h2 className="hot-deals-title">Special Decor Offers</h2>
         </div>
             <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                 <Swiper

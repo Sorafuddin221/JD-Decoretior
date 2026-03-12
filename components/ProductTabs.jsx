@@ -39,7 +39,7 @@ const ProductTabs = () => {
 
     return (
         <div className="product-tabs-container">
-            <h2 className="product-tabs-heading">Our Products</h2>
+            <h2 className="product-tabs-heading">Our Decor Collection</h2>
             <p className="product-tabs-subheading">Check out our variety of products</p>
             <div className="product-tabs">
                 <button
