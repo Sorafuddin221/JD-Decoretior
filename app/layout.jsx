@@ -4,6 +4,14 @@ import { ReduxProvider } from "./ReduxProvider";
 import LayoutClient from "../components/LayoutClient"; // Import LayoutClient
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import { Noto_Sans_Bengali } from 'next/font/google';
+
+const notoBengali = Noto_Sans_Bengali({
+  subsets: ['bengali'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-noto-bengali',
+});
 
 async function getSettings() {
   try {
@@ -82,7 +90,7 @@ export default async function RootLayout({ children }) {
       <head>
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
       </head>
-      <body>
+      <body className={`${notoBengali.variable} antialiased`}>
         <ReduxProvider>
           <SessionTimeout />
           <LayoutClient settings={settings}>{children}</LayoutClient>
