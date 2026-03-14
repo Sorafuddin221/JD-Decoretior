@@ -18,7 +18,7 @@ const SessionTimeout = () => {
             }
         };
 
-        const interval = setInterval(checkSession, 5000); 
+        const interval = setInterval(checkSession, 60000); 
 
         return () => clearInterval(interval);
     }, [dispatch]);

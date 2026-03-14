@@ -48,5 +48,5 @@ export async function middleware(request) {
 
 // Config specifies which paths the middleware should run on
 export const config = {
-  matcher: ['/admin/:path*', '/login', '/access-denied'], // Apply to all admin paths, and login/access-denied itself
+  matcher: ['/admin/:path*'], // Apply to all admin paths only
 };
