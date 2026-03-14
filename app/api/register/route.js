@@ -16,7 +16,7 @@ export async function POST(req) {
         const avatarFile = formData.get('avatar');
 
         if (!name || !email || !password) {
-            return NextResponse.json({ message: "Please enter all fields" }, { status: 400 });
+            return NextResponse.json({ message: "Please fill in all the required fields." }, { status: 400 });
         }
 
         let avatar = {
@@ -70,8 +70,8 @@ export async function POST(req) {
     } catch (error) {
         // Handle specific Mongoose errors, e.g., duplicate email
         if (error.code === 11000) {
-            return NextResponse.json({ message: "User with this email already exists" }, { status: 400 });
+            return NextResponse.json({ message: "An account with this email address already exists. Please try logging in instead." }, { status: 400 });
         }
-        return NextResponse.json({ message: `Error: ${error.message}` }, { status: 500 });
+        return NextResponse.json({ message: `An unexpected error occurred during registration: ${error.message}. Please try again.` }, { status: 500 });
     }
 }

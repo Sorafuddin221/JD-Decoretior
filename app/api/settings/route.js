@@ -16,7 +16,7 @@ export const GET = handleAsyncError(async () => {
 export const POST = handleAsyncError(async (req) => {
   const { user, isAuthenticated } = await verifyUserAuth(req);
   if (!isAuthenticated || user.role !== 'admin') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ success: false, message: 'You are not authorized to perform this action. Please log in as an administrator.' }, { status: 401 });
   }
 
   const body = await req.json();
@@ -52,5 +52,5 @@ export const POST = handleAsyncError(async (req) => {
   revalidatePath('/');
   revalidatePath('/admin/settings');
   
-  return NextResponse.json({ message: 'Settings updated successfully', settings: savedSettings });
+  return NextResponse.json({ success: true, message: 'The settings have been successfully updated.', settings: savedSettings });
 });

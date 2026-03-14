@@ -28,7 +28,7 @@ function UpdateProfilePage() {
                 }
             };
             reader.onerror = (error) => {
-                toast.error('Error reading File');
+                toast.error('An error occurred while reading the file. Please try again.');
             };
             reader.readAsDataURL(file);
             setAvatar(file); // Store the actual File object

@@ -17,13 +17,13 @@ export async function PUT(req) {
         const { rating, comment, productId } = await req.json();
 
         if (!productId || !rating) {
-            return NextResponse.json({ message: "Product ID and rating are required." }, { status: 400 });
+            return NextResponse.json({ message: "Please provide both a product ID and a rating." }, { status: 400 });
         }
 
         const product = await Product.findById(productId);
 
         if (!product) {
-            return NextResponse.json({ message: "Product not found." }, { status: 404 });
+            return NextResponse.json({ message: "The requested product could not be found." }, { status: 404 });
         }
 
         const review = {
@@ -59,11 +59,11 @@ export async function PUT(req) {
 
         return NextResponse.json({
             success: true,
-            message: "Review submitted successfully.",
+            message: "Your review has been successfully submitted. Thank you for your feedback.",
         }, { status: 200 });
 
     } catch (error) {
         console.error("Review submission error:", error);
-        return NextResponse.json({ message: `Error: ${error.message}` }, { status: 500 });
+        return NextResponse.json({ message: `An unexpected error occurred while submitting your review: ${error.message}. Please try again.` }, { status: 500 });
     }
 }

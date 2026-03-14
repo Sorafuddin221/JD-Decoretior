@@ -41,9 +41,9 @@ function ForgotPasswordPage() {
                     <form className="form" onSubmit={forgotPasswordEmail}>
                         <h2>Forgot Password</h2>
                         <div className="input-group">
-                            <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} name="email" placeholder='Enter Your Registered Email' />
+                            <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} name="email" placeholder='Please enter your registered email address' />
                         </div>
-                        <button className="authBtn" disabled={loading}>{loading ? 'Sending' : 'Send'}</button>
+                        <button className="authBtn" disabled={loading}>{loading ? 'Sending...' : 'Send Reset Link'}</button>
                     </form>
                 </div>
             </div>

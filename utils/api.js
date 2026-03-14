@@ -16,8 +16,8 @@ api.interceptors.response.use(
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         if (error.response && error.response.status === 401) {
             // Specifically check for the session expired message from our middleware
-            if (error.response.data.message === 'Session expired. Please log in again.') {
-                toast.error('Session expired. Please log in again.');
+            if (error.response.data.message === 'Your session has expired. Please sign in again to continue.') {
+                toast.error('Your session has expired. Please sign in again to continue.');
                 
                 // We can't easily access redux store or next/router here.
                 // A hard redirect is the simplest and most effective way to handle this globally.

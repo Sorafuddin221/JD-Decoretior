@@ -21,15 +21,15 @@ function PaymentSuccessClientComponent() {
     useEffect(() => {
         if (method === 'cod' || method === 'bkash') {
             if (method === 'cod') {
-                toast.success('Order Confirmed (COD)!', { position: 'top-center', autoClose: 3000 });
+                toast.success('Your order has been confirmed successfully (Cash on Delivery).', { position: 'top-center', autoClose: 3000 });
             } else {
-                toast.success('Order Submitted! bKash payment pending verification.', { position: 'top-center', autoClose: 3000 });
+                toast.success('Your order has been submitted successfully. bKash payment is currently pending verification.', { position: 'top-center', autoClose: 3000 });
             }
             dispatch(clearCart());
             sessionStorage.removeItem('orderData');
             sessionStorage.removeItem('orderItem');
         } else {
-            toast.error('Payment method not recognized or an error occurred.', { position: 'top-center', autoClose: 3000 });
+            toast.error('The payment method was not recognized, or an unexpected error occurred. Please contact support.', { position: 'top-center', autoClose: 3000 });
             sessionStorage.removeItem('orderData');
             sessionStorage.removeItem('orderItem');
         }
@@ -51,7 +51,7 @@ function PaymentSuccessClientComponent() {
                             <div className="success-icon">
                                 <div className="checkmart"></div>
                             </div>
-                            <h1>Order Confirmed !</h1>
+                            <h1>Order Confirmed!</h1>
                             <p>Your order has been placed successfully and will be processed soon.</p>
                             <Link className='explore-btn' href='/orders/user'>View All Orders</Link>
                         </div>

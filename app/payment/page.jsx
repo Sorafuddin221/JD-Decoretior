@@ -66,7 +66,7 @@ function PaymentPage() {
 
     const completePayment = async () => {
         if (!filteredOrderData) {
-            toast.error('No order data found. Please confirm your order again.', { position: 'top-center', autoClose: 3000 });
+            toast.error('No order data was found. Please confirm your order details again.', { position: 'top-center', autoClose: 3000 });
             router.push('/order/confirm'); // Redirect back to confirm page
             return;
         }
@@ -74,15 +74,15 @@ function PaymentPage() {
         // Validate bKash details if selected
         if (paymentMethod === 'bkash') {
             if (!bkashNumber || bkashNumber.length < 11) {
-                toast.error('Please enter a valid bKash number', { position: 'top-center' });
+                toast.error('Please enter a valid bKash number.', { position: 'top-center' });
                 return;
             }
             if (!trxID || trxID.length < 8) {
-                toast.error('Please enter a valid Transaction ID', { position: 'top-center' });
+                toast.error('Please enter a valid Transaction ID.', { position: 'top-center' });
                 return;
             }
             if (!paidAmount || Number(paidAmount) <= 0) {
-                toast.error('Please enter the amount you paid', { position: 'top-center' });
+                toast.error('Please enter the amount paid.', { position: 'top-center' });
                 return;
             }
         }
@@ -102,20 +102,20 @@ function PaymentPage() {
         try {
             const resultAction = await dispatch(createOrder(finalOrderData));
             if (createOrder.fulfilled.match(resultAction)) {
-                toast.success(paymentMethod === 'cod' ? 'Order Confirmed (COD)!' : 'bKash Payment Submitted!', { position: 'top-center', autoClose: 3000 });
+                toast.success(paymentMethod === 'cod' ? 'Your order has been confirmed successfully (COD).' : 'Your bKash payment details have been submitted successfully.', { position: 'top-center', autoClose: 3000 });
                 dispatch(clearCart());
                 sessionStorage.removeItem('orderData');
                 sessionStorage.setItem('orderItem', JSON.stringify(resultAction.payload.order));
                 router.push(`/paymentSuccess?method=${paymentMethod}`);
             } else {
-                toast.error(resultAction.payload?.message || 'Order creation failed', {
+                toast.error(resultAction.payload?.message || 'An error occurred while creating your order. Please try again.', {
                     position: 'top-center',
                     autoClose: 3000,
                 });
             }
         } catch (error) {
             console.error("Failed to create order:", error);
-            toast.error('Something went wrong during order creation', {
+            toast.error('An unexpected error occurred during order creation. Please try again.', {
                 position: 'top-center',
                 autoClose: 3000,
             });

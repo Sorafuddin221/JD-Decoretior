@@ -38,7 +38,7 @@ function UpdatePasswordPage() {
 
     useEffect(() => {
         if (success) {
-            toast.success('Password Updated successfully',
+            toast.success('Your password has been updated successfully.',
                 { position: 'top-center', autoClose: 3000 });
             dispatch(removeSuccess());
             router.push("/profile");

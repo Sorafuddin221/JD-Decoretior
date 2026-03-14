@@ -68,14 +68,14 @@ function UserDashboard({ user }) {
         dispatch(logout())
             .unwrap()
             .then(() => {
-                toast.success('Logout Successful', { position: 'top-center', autoClose: 3000 });
+                toast.success('You have been successfully logged out. Thank you for visiting!', { position: 'top-center', autoClose: 3000 });
                 dispatch(removeSuccess());
                 dispatch(clearCart());
                 router.push('/');
                 setMenuVisible(false);
             })
             .catch((error) => {
-                toast.error(error.message || 'Logout Failed', { position: 'top-center', autoClose: 3000 });
+                toast.error(error.message || 'Logout failed. Please try again.', { position: 'top-center', autoClose: 3000 });
             });
     };
 

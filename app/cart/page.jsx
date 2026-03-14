@@ -37,7 +37,7 @@ function CartPage() {
                     securityDepositPercentage: data.securityDepositPercentage || 0,
                 });
             } catch (error) {
-                toast.error("Error fetching payment settings");
+                toast.error("An error occurred while fetching payment settings. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -83,12 +83,12 @@ function CartPage() {
         // Check for missing color selection
         const itemMissingColor = cartItems.find(item => Array.isArray(item.colors) && item.colors.length > 0 && !item.color);
         if (itemMissingColor) {
-            toast.error(`Please select a color for ${itemMissingColor.name}`);
+            toast.error(`Please select a color for ${itemMissingColor.name}.`);
             return;
         }
 
         if (!selectedZone) {
-            toast.error("Please select your shipping area");
+            toast.error("Please select a shipping area to proceed.");
             return;
         }
         dispatch(saveShippingInfo({
@@ -108,7 +108,7 @@ function CartPage() {
             <PageTitle title="Your Cart" />
             {cartItems.length === 0 ? (
                 <div className="emply-cart-container">
-                    <p className="empty-cart-message">Your cart is Empty</p>
+                    <p className="empty-cart-message">Your cart is currently empty.</p>
                     <Link href="/products" className='viewproducts'>View Products</Link>
                 </div>
             ) : (
@@ -130,7 +130,7 @@ function CartPage() {
                         <div className='shipping-page'>
                             <div className=" shipping-summary">
                                 <h3 className="price-summary-header">Shipping Area</h3>
-                                {loading ? <p>Loading...</p> : (
+                                {loading ? <p>Loading shipping zones...</p> : (
                                     paymentSettings.shippingZones.length > 0 ? (
                                         paymentSettings.shippingZones.map((zone, idx) => (
                                             <div className='shipping-item' key={idx}>
@@ -150,7 +150,7 @@ function CartPage() {
                             </div>
                         </div>
                         <h3 className="price-summary-header">Price Summary</h3>
-                        {loading ? <p>Loading...</p> : <>
+                        {loading ? <p>Loading summary...</p> : <>
                             <div className="summary-item">
                                 <p className="summary-label">Rental Subtotal</p>
                                 <p className="summary-label">TK {subtotal.toFixed(2)}</p>
@@ -180,7 +180,7 @@ function CartPage() {
                             </div>
                         </>}
                         <button className="checkout-btn" onClick={checkoutHandler} disabled={loading}>
-                            {loading ? 'Loading...' : 'Proceed To CheckOut'}
+                            {loading ? 'Processing...' : 'Proceed to Checkout'}
                         </button>
                     </div>
                 </div>

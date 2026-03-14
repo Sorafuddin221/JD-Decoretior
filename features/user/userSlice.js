@@ -14,7 +14,7 @@ const {data}=await api.post('/api/register',userData,config)
 return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'Registration failed. Please try again later')
+return rejectWithValue(error.response?.data || 'Registration failed. Please try again later.')
 }
 })
 
@@ -30,7 +30,7 @@ const {data}=await api.post('/api/login',{email,password, rememberMe},config)
 return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'login failed. Please try again later')
+return rejectWithValue(error.response?.data || 'Login failed. Please check your credentials and try again.')
 }
 })
 export const loadUser=createAsyncThunk('user/loadUser',async(_,{rejectWithValue})=>{
@@ -39,7 +39,7 @@ try{
     return data;
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'faild to load user profile')
+return rejectWithValue(error.response?.data || 'Failed to load user profile.')
 }
 })
 
@@ -49,7 +49,7 @@ try{
     return data;
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'faild to load user profile')
+return rejectWithValue(error.response?.data || 'Failed to log out. Please try again.')
 }
 })
 
@@ -64,7 +64,7 @@ try{
     return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || {message:'Profile update failed.Please try again later'})
+return rejectWithValue(error.response?.data || {message:'Profile update failed. Please try again later.'})
 }
 })
 
@@ -79,7 +79,7 @@ try{
     return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'Password update failed')
+return rejectWithValue(error.response?.data || 'Password update failed. Please try again.')
 }
 })
 
@@ -94,7 +94,7 @@ try{
     return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || {message:'Email Send Failed'})
+return rejectWithValue(error.response?.data || {message:'Failed to send password reset email. Please try again.'})
 }
 })
 
@@ -109,7 +109,7 @@ try{
     return data
 
 }catch(error){
-return rejectWithValue(error.response?.data || {message:'Email Send Failed'})
+return rejectWithValue(error.response?.data || {message:'Failed to reset password. Please try again.'})
 }
 })
 
@@ -163,7 +163,7 @@ const userSlice=createSlice({
                         })
                         .addCase(register.rejected,(state,action)=>{
                             state.loading=false,
-                            state.error=action.payload?.message || 'Registration failed. Please try again later'
+                            state.error=action.payload?.message || 'Registration failed. Please try again later.'
                             state.user=null
                             state.isAuthenticated=false
                         })
@@ -191,7 +191,7 @@ const userSlice=createSlice({
                         })
                         .addCase(login.rejected,(state,action)=>{
                             state.loading=false,
-                            state.error=action.payload?.message || 'login failed. Please try again later'
+                            state.error=action.payload?.message || 'Login failed. Please check your credentials and try again.'
                             state.user=null
                             state.isAuthenticated=false
                         })
@@ -217,7 +217,7 @@ const userSlice=createSlice({
                         })
                         .addCase(logout.rejected,(state,action)=>{
                             state.loading=false,
-                            state.error=action.payload?.message || 'failed to load user profile'
+                            state.error=action.payload?.message || 'Failed to log out. Please try again.'
                         })
                          // loading cases
                         builder
@@ -242,7 +242,7 @@ const userSlice=createSlice({
                         })
                         .addCase(loadUser.rejected,(state,action)=>{
                             state.loading=false,
-                            state.error=action.payload?.message || 'login to load user profile.'
+                            state.error=action.payload?.message || 'Please log in to load your user profile.'
                             state.user=null
                             state.isAuthenticated=false
                 
@@ -273,7 +273,7 @@ const userSlice=createSlice({
                 })
                 .addCase(updateProfile.rejected,(state,action)=>{
                     state.loading=false,
-                    state.error=action.payload?.message || 'Profile update failed. Please try again later'
+                    state.error=action.payload?.message || 'Profile update failed. Please try again later.'
                 })
         
                 //update user Password 
@@ -290,7 +290,7 @@ const userSlice=createSlice({
                 })
                 .addCase(updatePassword.rejected,(state,action)=>{
                     state.loading=false,
-                    state.error=action.payload?.message || 'Password update failed. Please try again later'
+                    state.error=action.payload?.message || 'Password update failed. Please try again.'
                 })
                 //Forgot user Password 
                 builder
@@ -308,7 +308,7 @@ const userSlice=createSlice({
                 })
                 .addCase(forgotPassword.rejected,(state,action)=>{
                     state.loading=false,
-                    state.error=action.payload?.message || 'Email Send Failed'
+                    state.error=action.payload?.message || 'Failed to send password reset email. Please try again.'
                 })
         
                  //reset user Password 
@@ -328,7 +328,7 @@ const userSlice=createSlice({
                 })
                 .addCase(resetPassword.rejected,(state,action)=>{
                     state.loading=false,
-                    state.error=action.payload?.message || 'Email Send Failed'
+                    state.error=action.payload?.message || 'Failed to reset password. Please try again.'
                 })
                 
             }

@@ -43,7 +43,7 @@ function LoginClientComponent() {
 
     useEffect(() => {
         if (success) {
-            toast.success('Login successful', { position: 'top-center', autoClose: 3000 });
+            toast.success('Welcome back! You have successfully signed in.', { position: 'top-center', autoClose: 3000 });
             dispatch(removeSuccess());
             dispatch(clearCart());
         }

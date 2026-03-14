@@ -40,7 +40,7 @@ function ResetPasswordPage({ params }) {
 
     useEffect(() => {
         if (success) {
-            toast.success('Password Reset successfully',
+            toast.success('Your password has been reset successfully.',
                 { position: 'top-center', autoClose: 3000 });
             dispatch(removeSuccess());
             router.push("/login");

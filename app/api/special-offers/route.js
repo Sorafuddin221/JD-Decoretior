@@ -9,7 +9,7 @@ export const POST = handleAsyncError(async (request) => {
   const { imageUrl, buttonUrl } = body;
 
   if (!imageUrl) {
-    return NextResponse.json({ success: false, message: 'Image URL is required' }, { status: 400 });
+    return NextResponse.json({ success: false, message: 'Please provide an image URL.' }, { status: 400 });
   }
 
   const newSpecialOffer = new SpecialOffer({
@@ -19,7 +19,7 @@ export const POST = handleAsyncError(async (request) => {
 
   await newSpecialOffer.save();
 
-  return NextResponse.json({ success: true, specialOffer: newSpecialOffer }, { status: 201 });
+  return NextResponse.json({ success: true, message: 'The special offer has been successfully created.', specialOffer: newSpecialOffer }, { status: 201 });
 });
 
 export const GET = handleAsyncError(async () => {

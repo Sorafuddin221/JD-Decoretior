@@ -10,10 +10,10 @@ export const DELETE = handleAsyncError(async (request, { params }) => {
   const specialOffer = await SpecialOffer.findById(id);
 
   if (!specialOffer) {
-    return NextResponse.json({ success: false, message: 'Special Offer not found' }, { status: 404 });
+    return NextResponse.json({ success: false, message: 'The requested special offer could not be found.' }, { status: 404 });
   }
 
   await specialOffer.deleteOne(); // Use deleteOne()
 
-  return NextResponse.json({ success: true, message: 'Special Offer deleted successfully' }, { status: 200 });
+  return NextResponse.json({ success: true, message: 'The special offer has been successfully deleted.' }, { status: 200 });
 });

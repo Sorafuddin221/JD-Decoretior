@@ -18,12 +18,12 @@ function ContactUs() {
     e.preventDefault();
     try {
       const { data } = await axios.post('/api/contact', { name, email, message });
-      toast.success(data.message);
+      toast.success(data.message || "Your message has been sent successfully. Thank you for contacting us!");
       setName('');
       setEmail('');
       setMessage('');
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "An unexpected error occurred. Please try again later.");
     }
   };
 

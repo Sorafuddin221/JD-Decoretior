@@ -60,7 +60,7 @@ function OrderDetailsPage({ params }) {
                             <thead>
                                 <tr>
                                     <th>Image</th>
-                                    <th>name</th>
+                                    <th>Name</th>
                                     <th>Quantity</th>
                                     <th>Price (TK)</th>
                                 </tr>
@@ -141,7 +141,7 @@ function OrderDetailsPage({ params }) {
                                     </td>
                                 </tr>
                                 {paidAt && <tr className="table-row">
-                                    <th className="table-cell">Paind At :-</th>
+                                    <th className="table-cell">Paid At :-</th>
                                     <td className='table-cell'>
                                         {new Date(paidAt).toLocaleString()}
                                     </td>
@@ -152,19 +152,19 @@ function OrderDetailsPage({ params }) {
                                         TK {itemPrice}
                                     </td>                            </tr>
                                 <tr className="table-row">
-                                    <th className="table-cell">tax Price :-</th>
+                                    <th className="table-cell">Tax Price :-</th>
                                     <td className='table-cell'>
                                         TK {taxPrice}
                                     </td>
                                 </tr>
                                 <tr className="table-row">
-                                    <th className="table-cell">Shipping price :-</th>
+                                    <th className="table-cell">Shipping Price :-</th>
                                     <td className='table-cell'>
                                         TK {shippingPrice}
                                     </td>                            
                                 </tr>
                                 <tr className="table-row">
-                                    <th className="table-cell">Total price :-</th>
+                                    <th className="table-cell">Total Price :-</th>
                                     <td className='table-cell'>
                                         TK {totalPrice}
                                     </td>                           

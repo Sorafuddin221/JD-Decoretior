@@ -33,19 +33,19 @@ export async function POST(request) {
                 } catch (cloudinaryError) {
                     // Catch errors specifically from Cloudinary upload
                     console.error("Caught Cloudinary upload error:", cloudinaryError);
-                    return NextResponse.json({ success: false, message: `Cloudinary upload failed: ${cloudinaryError.message}` }, { status: 500 });
+                    return NextResponse.json({ success: false, message: `An error occurred during image upload: ${cloudinaryError.message}. Please try again.` }, { status: 500 });
                 }
             }
         }
 
         if (images.length === 0) {
-            return NextResponse.json({ success: false, message: 'No images uploaded' }, { status: 400 });
+            return NextResponse.json({ success: false, message: 'No images were provided for upload. Please select at least one image.' }, { status: 400 });
         }
 
         return NextResponse.json({ success: true, images }, { status: 200 });
 
     } catch (error) {
         console.error("General Error in /api/upload:", error); // Renamed logging for clarity
-        return NextResponse.json({ success: false, message: error.message || 'Image upload failed' }, { status: 500 });
+        return NextResponse.json({ success: false, message: error.message || 'An unexpected error occurred during image upload. Please try again.' }, { status: 500 });
     }
 }

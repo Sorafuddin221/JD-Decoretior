@@ -69,31 +69,31 @@ function ShippingPage() {
 
         if (!address.trim()) {
             setAddressError(true);
-            toast.error('Address is required!', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter your shipping address.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         }
         if (!pinCode.trim()) {
             setPinCodeError(true);
-            toast.error('Pincode is required!', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter your pincode.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         }
         if (!phoneNumber.trim()) {
             setPhoneNumberError(true);
-            toast.error('Phone Number is required!', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter your phone number.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         } else if (phoneNumber.length !== 11) {
             setPhoneNumberError(true);
-            toast.error('Invalid Phone number! It should be 11 Digits', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter a valid 11-digit phone number.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         }
 
         if (!state.trim()) {
             setStateError(true);
-            toast.error('Division is required!', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please select your division.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         } else if (state && !city.trim()) {
             setCityError(true);
-            toast.error('District is required!', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please select your district.', { position: 'top-center', autoClose: 3000 });
             isValid = false;
         }
 

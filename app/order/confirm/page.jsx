@@ -36,7 +36,7 @@ function OrderConfirmPage() {
                     securityDepositPercentage: data.securityDepositPercentage || 0,
                 });
             } catch (error) {
-                toast.error("Error fetching payment settings");
+                toast.error("An error occurred while fetching payment settings. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -135,7 +135,7 @@ function OrderConfirmPage() {
                         </tbody>
                     </table>
                     <table className="confirm-table cart-table">
-                        <caption>Cart Item</caption>
+                        <caption>Cart Items</caption>
                         <thead>
                             <tr>
                                 <th>Image</th>
@@ -186,7 +186,7 @@ function OrderConfirmPage() {
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5">Loading...</td>
+                                    <td colSpan="5">Loading payment details...</td>
                                 </tr>
                             ) : (
                                 <tr>
@@ -201,7 +201,7 @@ function OrderConfirmPage() {
                     </table>
                 </div>
                 <button className="proceed-button" onClick={proceedToPayment} disabled={loading}>
-                    {loading ? 'Loading...' : 'Proceed to Payment'}
+                    {loading ? 'Processing...' : 'Proceed to Payment'}
                 </button>
             </div>
         </>

@@ -27,11 +27,11 @@ const ProductsClientComponent = ({ products, totalPages, currentPage, keyword, c
                     );
                     setOfferCards(filteredCards);
                 } else {
-                    toast.error('Failed to fetch offer cards for products page.');
+                    toast.error('We could not load the offer cards at this time. Please try again later.');
                 }
             } catch (error) {
                 console.error('Error fetching offer cards for products page:', error);
-                toast.error('Error fetching offer cards for products page.');
+                toast.error('An error occurred while loading offer cards. Please try again.');
             }
         };
         fetchOfferCards();

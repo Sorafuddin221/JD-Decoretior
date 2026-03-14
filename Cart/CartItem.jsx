@@ -23,11 +23,11 @@ function CartItem({ item }) {
 
     const handleQuantityChange = (newQuantity) => {
         if (newQuantity < 1) {
-            toast.error('Quantity cannot be less than 1', { position: 'top-center', autoClose: 3000 });
+            toast.error('The quantity must be at least 1.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         if (newQuantity > item.stock) {
-            toast.error('Cannot exceed available stock!', { position: 'top-center', autoClose: 3000 });
+            toast.error('The selected quantity exceeds our current stock availability.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         // Dispatch the action to update the quantity in the Redux store
@@ -50,7 +50,7 @@ function CartItem({ item }) {
 
     useEffect(() => {
         if (error) {
-            toast.error(error.message || 'An error occurred', { position: 'top-center', autoClose: 3000 });
+            toast.error(error.message || 'An unexpected error occurred. Please try again.', { position: 'top-center', autoClose: 3000 });
             dispatch(removeErrors());
         }
     }, [dispatch, error]);
@@ -69,7 +69,7 @@ function CartItem({ item }) {
     const handleRemove = () => {
         if (loading) return;
         dispatch(removeItemFromCart(item.product));
-        toast.success("Item removed from cart successfully", {
+        toast.success("The item has been successfully removed from your cart.", {
             position: 'top-center',
             autoClose: 3000,
             toastId: 'cart-remove' // Use a different toastId to avoid conflicts

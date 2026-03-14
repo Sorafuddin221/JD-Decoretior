@@ -10,7 +10,7 @@ export const fetchAdminProducts = createAsyncThunk('admin/fetchAdminProducts', a
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Error While Fetching the products')
+        return rejectWithValue(error.response?.data || 'An error occurred while fetching the products.')
     }
 })
 //Create products
@@ -26,7 +26,7 @@ export const createProduct = createAsyncThunk('admin/createProduct', async (prod
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Product Creation Failed')
+        return rejectWithValue(error.response?.data || 'Failed to create the product. Please try again.')
     }
 })
 
@@ -43,7 +43,7 @@ export const updateProduct = createAsyncThunk('admin/updateProduct', async ({ id
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Product Update Failed')
+        return rejectWithValue(error.response?.data || 'Failed to update the product. Please try again.')
     }
 })
 //Delete products
@@ -57,7 +57,7 @@ export const deleteProduct = createAsyncThunk('admin/deleteProduct', async (prod
         if (error.response && error.response.status === 404) {
             return { productId, status: 404 }; // Treat 404 as success for UI state update
         }
-        return rejectWithValue(error.response?.data || 'Product Deletion Failed')
+        return rejectWithValue(error.response?.data || 'Failed to delete the product. Please try again.')
     }
 })
 
@@ -70,7 +70,7 @@ export const fetchUsers = createAsyncThunk('admin/fetchUsers', async (keyword = 
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to fetch users')
+        return rejectWithValue(error.response?.data || 'An error occurred while fetching the user list.')
     }
 })
 
@@ -83,7 +83,7 @@ export const getSingleUser = createAsyncThunk('admin/getSingleUser', async (id, 
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to fetch Single user')
+        return rejectWithValue(error.response?.data || 'Failed to retrieve user details. Please try again.')
     }
 })
 
@@ -96,7 +96,7 @@ export const updateUserRole = createAsyncThunk('admin/updateUserRole', async ({u
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to update user role')
+        return rejectWithValue(error.response?.data || "Failed to update the user's role. Please try again.")
     }
 })
 
@@ -109,7 +109,7 @@ export const deleteUser = createAsyncThunk('admin/deleteUser', async (userId, { 
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to Delete user')
+        return rejectWithValue(error.response?.data || 'Failed to delete the user. Please try again.')
     }
 })
 
@@ -120,7 +120,7 @@ export const fetchAllOrders = createAsyncThunk('admin/fetchAllOrders', async (ke
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to fetch orders');
+        return rejectWithValue(error.response?.data || 'An error occurred while fetching orders.');
     }
 });
 
@@ -131,7 +131,7 @@ export const deleteOrder = createAsyncThunk('admin/deleteOrder', async (id, { re
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to Delete Order')
+        return rejectWithValue(error.response?.data || 'Failed to delete the order. Please try again.')
     }
 })
 
@@ -147,7 +147,7 @@ export const updateOrderStatus = createAsyncThunk('admin/updateOrderStatus', asy
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to Update Order status')
+        return rejectWithValue(error.response?.data || 'Failed to update the order status. Please try again.')
     }
 })
 
@@ -163,7 +163,7 @@ export const updatePaymentStatus = createAsyncThunk('admin/updatePaymentStatus',
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to Update Payment status')
+        return rejectWithValue(error.response?.data || 'Failed to update the payment status. Please try again.')
     }
 })
 
@@ -175,7 +175,7 @@ export const fetchProductReviews = createAsyncThunk('admin/fetchProductReviews',
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to fetch Product Reviews')
+        return rejectWithValue(error.response?.data || 'An error occurred while fetching product reviews.')
     }
 })
 
@@ -187,7 +187,7 @@ export const deleteReview = createAsyncThunk('admin/deleteReview', async ({produ
         return data;
 
     } catch (error) {
-        return rejectWithValue(error.response?.data || 'Failed to delete Product Reviews')
+        return rejectWithValue(error.response?.data || 'Failed to delete the product review. Please try again.')
     }
 })
  //|Get Admin Order details
@@ -196,7 +196,7 @@ export const deleteReview = createAsyncThunk('admin/deleteReview', async ({produ
                     const {data}=await api.get(`/api/admin/order/${orderID}`)
                     return data;
                 }catch(error){
-                    return rejectWithValue(error.response?.data || 'Failed to fetch admin order details')
+                    return rejectWithValue(error.response?.data || 'Failed to retrieve order details. Please try again.')
                 }
             })
 
@@ -244,7 +244,7 @@ const adminSlice = createSlice({
             })
             .addCase(fetchAdminProducts.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Error while Fetching to products'
+                    state.error = action.payload?.message || 'An error occurred while fetching the products.'
             })
         builder
             .addCase(createProduct.pending, (state) => {
@@ -259,7 +259,7 @@ const adminSlice = createSlice({
             })
             .addCase(createProduct.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Product Creation Failed'
+                    state.error = action.payload?.message || 'Failed to create the product. Please try again.'
             })
         builder
             .addCase(updateProduct.pending, (state) => {
@@ -274,7 +274,7 @@ const adminSlice = createSlice({
             })
             .addCase(updateProduct.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Product Update Failed'
+                    state.error = action.payload?.message || 'Failed to update the product. Please try again.'
             })
 
         builder
@@ -291,7 +291,7 @@ const adminSlice = createSlice({
             .addCase(deleteProduct.rejected, (state, action) => {
                 const productId=action.meta.arg;
                 state.deleting[productId]=false;
-                    state.error = action.payload?.message || 'Product Deletion Failed'
+                    state.error = action.payload?.message || 'Failed to delete the product. Please try again.'
             })
             builder
             .addCase(fetchUsers.pending, (state) => {
@@ -306,7 +306,7 @@ const adminSlice = createSlice({
             })
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to fetch users'
+                    state.error = action.payload?.message || 'An error occurred while fetching the user list.'
             })
             builder
             .addCase(getSingleUser.pending, (state) => {
@@ -321,7 +321,7 @@ const adminSlice = createSlice({
             })
             .addCase(getSingleUser.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to fetch single user'
+                    state.error = action.payload?.message || 'Failed to retrieve user details. Please try again.'
             })
 
             builder
@@ -337,7 +337,7 @@ const adminSlice = createSlice({
             })
             .addCase(updateUserRole.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to update user role'
+                    state.error = action.payload?.message || "Failed to update the user's role. Please try again."
             })
              builder
             .addCase(deleteUser.pending, (state) => {
@@ -352,7 +352,7 @@ const adminSlice = createSlice({
             })
             .addCase(deleteUser.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to Delete user'
+                    state.error = action.payload?.message || 'Failed to delete the user. Please try again.'
             })
 
              builder
@@ -369,7 +369,7 @@ const adminSlice = createSlice({
             })
             .addCase(fetchAllOrders.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to Fetch Orders'
+                    state.error = action.payload?.message || 'An error occurred while fetching orders.'
             })
 
             builder
@@ -385,7 +385,7 @@ const adminSlice = createSlice({
             })
             .addCase(deleteOrder.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to Delete Order'
+                    state.error = action.payload?.message || 'Failed to delete the order. Please try again.'
             })
 
            
@@ -401,7 +401,7 @@ const adminSlice = createSlice({
             })
             .addCase(getAdminOrderDetails.rejected, (state, action) => {
                 state.loading = false,
-                state.error = action.payload?.message || 'Failed to fetch admin order details'
+                state.error = action.payload?.message || 'Failed to retrieve order details. Please try again.'
             })
 
             builder
@@ -417,7 +417,7 @@ const adminSlice = createSlice({
             })
             .addCase(updateOrderStatus.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to Update Order status'
+                    state.error = action.payload?.message || 'Failed to update the order status. Please try again.'
             })
 
             builder
@@ -433,7 +433,7 @@ const adminSlice = createSlice({
             })
             .addCase(updatePaymentStatus.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to Update Payment status'
+                    state.error = action.payload?.message || 'Failed to update the payment status. Please try again.'
             })
 
             builder
@@ -448,7 +448,7 @@ const adminSlice = createSlice({
             })
             .addCase(fetchProductReviews.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to fetch Product Reviews'
+                    state.error = action.payload?.message || 'An error occurred while fetching product reviews.'
             })
 
             builder
@@ -464,7 +464,7 @@ const adminSlice = createSlice({
             })
             .addCase(deleteReview.rejected, (state, action) => {
                 state.loading = false,
-                    state.error = action.payload?.message || 'Failed to delete Product Reviews'
+                    state.error = action.payload?.message || 'Failed to delete the product review. Please try again.'
             })
 
     }

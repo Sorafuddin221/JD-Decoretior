@@ -9,7 +9,7 @@ export const verifyUserAuth = async (req) => {
         if (!token) {
             return {
                 isAuthenticated: false,
-                error: new Error('Please login to access this resource.'),
+                error: new Error('Please sign in to access this protected resource.'),
                 statusCode: 401
             };
         }
@@ -20,7 +20,7 @@ export const verifyUserAuth = async (req) => {
         if (!user) {
             return {
                 isAuthenticated: false,
-                error: new Error('User not found.'),
+                error: new Error('User account not found. Please try signing in again.'),
                 statusCode: 404
             };
         }
@@ -35,14 +35,14 @@ export const verifyUserAuth = async (req) => {
         if (error.name === 'TokenExpiredError') {
             return {
                 isAuthenticated: false,
-                error: new Error('Session expired. Please log in again.'),
+                error: new Error('Your session has expired. Please sign in again to continue.'),
                 statusCode: 401
             };
         }
         if (error.name === 'JsonWebTokenError') {
             return {
                 isAuthenticated: false,
-                error: new Error('Invalid token. Please log in again.'),
+                error: new Error('Authentication error. Please sign in again.'),
                 statusCode: 401
             };
         }

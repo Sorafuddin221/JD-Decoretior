@@ -29,7 +29,7 @@ try{
     return cartItem;
 
 }catch(error){
-return rejectWithValue(error.response?.data || 'An Error Occured')
+return rejectWithValue(error.response?.data || 'An unexpected error occurred. Please try again.')
 }
 })
 
@@ -91,10 +91,10 @@ const cartSlice=createSlice({
 
             if(existingItem){
                 existingItem.quantity = item.quantity
-                state.message = `Updated ${item.name}${item.color ? ` (${item.color})` : ''} quantity in the cart`;
+                state.message = `The quantity for ${item.name}${item.color ? ` (${item.color})` : ''} has been updated in your cart.`;
             }else{
                 state.cartItems.push(item);
-                state.message = `${item.name}${item.color ? ` (${item.color})` : ''} is added to cart successfully`;
+                state.message = `${item.name}${item.color ? ` (${item.color})` : ''} has been successfully added to your cart.`;
             }
             state.loading=false,
             state.error=null,
@@ -107,7 +107,7 @@ const cartSlice=createSlice({
         })
         .addCase(addItemsToCart.rejected,(state,action)=>{
             state.loading=false,
-            state.error=action.payload?.message || 'An error'
+            state.error=action.payload?.message || 'An unexpected error occurred. Please try again.'
 
         })
     }

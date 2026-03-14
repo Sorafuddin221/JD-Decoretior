@@ -39,7 +39,7 @@ const NotificationBell = () => {
                 fetchNotifications();
             }
         } catch (error) {
-            toast.error("Failed to mark notification as read.");
+            toast.error("Failed to mark the notification as read. Please try again.");
             console.error("Failed to mark notification as read.", error);
         }
     };

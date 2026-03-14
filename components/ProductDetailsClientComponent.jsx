@@ -100,7 +100,7 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
 
     const decreaseQuantity = () => {
         if (quantity <= 1) {
-            toast.error('Quantity cannot be less than 1', { position: 'top-center', autoClose: 3000 });
+            toast.error('The quantity must be at least 1.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         setQuantity(qty => qty - 1);
@@ -109,7 +109,7 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
     const increaseQuantity = () => {
         const maxStock = availableStock !== null ? availableStock : product.stock;
         if (maxStock <= quantity) {
-            toast.error('Cannot exceed available Stock!', { position: 'top-center', autoClose: 3000 });
+            toast.error('The selected quantity exceeds our current stock availability.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         setQuantity(qty => qty + 1);
@@ -117,33 +117,33 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
 
     const addToCart = () => {
         if (!isAuthenticated) { // Check for authentication
-            toast.error("Please login to your account");
+            toast.error("Please log in to your account to continue.");
             return;
         }
 
         if (!product || !product._id) {
-            toast.error('Product information is not available. Cannot add to cart.', { position: 'top-center', autoClose: 3000 });
+            toast.error('Product information is currently unavailable. We cannot add this item to your cart.', { position: 'top-center', autoClose: 3000 });
             console.error("Attempted to add to cart without valid product or product ID.");
             return;
         }
 
         if (!startDate || !endDate) {
-            toast.error('Please select Start and End dates for rental.', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please select both start and end dates for your rental.', { position: 'top-center', autoClose: 3000 });
             return;
         }
 
         if (availableStock !== null && availableStock < quantity) {
-            toast.error(`Only ${availableStock} units available for these dates.`, { position: 'top-center', autoClose: 3000 });
+            toast.error(`Only ${availableStock} units are available for the selected dates.`, { position: 'top-center', autoClose: 3000 });
             return;
         }
 
         if (new Date(startDate) > new Date(endDate)) {
-            toast.error('End date cannot be before Start date.', { position: 'top-center', autoClose: 3000 });
+            toast.error('The end date cannot be earlier than the start date.', { position: 'top-center', autoClose: 3000 });
             return;
         }
 
         if (product.colors && product.colors.length > 0 && !selectedColor) {
-            toast.error('Please select a color for the product.', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please select a color for this product.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         dispatch(addItemsToCart({ 
@@ -158,7 +158,7 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
     const handleReviewSubmit = (e) => {
         e.preventDefault();
         if (!userRating) {
-            toast.error('Please select a Rating', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please select a rating for the product.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         dispatch(createReview({
@@ -170,7 +170,7 @@ function ProductDetailsClientComponent({ initialProduct, productId }) {
 
     useEffect(() => {
         if (reviewSuccess) {
-            toast.success('Review Submitted Successfully', { position: 'top-center', autoClose: 3000 });
+            toast.success('Thank you! Your review has been submitted successfully.', { position: 'top-center', autoClose: 3000 });
             setUserRating(0);
             setComment("");
             dispatch(removeSuccess());

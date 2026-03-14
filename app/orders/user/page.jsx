@@ -31,26 +31,26 @@ function MyOrdersPage() {
             dispatch(removeErrors());
         }
         if (isDeleted) {
-            toast.success('Order Deleted Successfully', { position: 'top-center', autoClose: 3000 });
+            toast.success('Order has been successfully deleted.', { position: 'top-center', autoClose: 3000 });
             dispatch(removeIsDeleted());
         }
     }, [dispatch, error, isDeleted]);
 
     return (
         <>
-            <PageTitle title="User Order" />
+            <PageTitle title="My Orders" />
             {loading ? (<Loader />) : orders.length > 0 ? (<div className="my-orders-container">
                 <div className="table-responsive">
                     <table className="orders-table">
                         <thead>
                             <tr>
-                                <th>Order Id</th>
+                                <th>Order ID</th>
                                 <th>Rental Dates</th>
                                 <th>Days</th>
                                 <th>Items Count</th>
-                                <th> status</th>
+                                <th>Status</th>
                                 <th>Total Price</th>
-                                <th>View order</th>
+                                <th>View Order</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -82,7 +82,7 @@ function MyOrdersPage() {
                 </div>
             </div>) : (
                 <div className="no-orders">
-                    <p className="no-order-message">no Orders found</p>
+                    <p className="no-order-message">No orders found. Please start shopping to see your orders here.</p>
                 </div>
             )}
         </>

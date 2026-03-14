@@ -41,7 +41,7 @@ function RegisterPage() {
     const registerSubmit = async (e) => {
         e.preventDefault();
         if (!name || !email || !password) {
-            toast.error('Please fill out all the required fields',
+            toast.error('Please fill in all the required fields.',
                 { position: 'top-center', autoClose: 3000 });
             return;
         }
@@ -65,7 +65,7 @@ function RegisterPage() {
 
     useEffect(() => {
         if (success) {
-            toast.success("Registration SuccessFul",
+            toast.success("Your account has been created successfully.",
                 { position: 'top-center', autoClose: 3000 });
             dispatch(removeSuccess());
             dispatch(clearCart());

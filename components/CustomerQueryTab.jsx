@@ -16,7 +16,7 @@ function CustomerQueryTab({ product, user }) {
 
     useEffect(() => {
         if (querySuccess) {
-            toast.success('Action completed successfully!', { position: 'top-center', autoClose: 3000 });
+            toast.success('Your action has been completed successfully!', { position: 'top-center', autoClose: 3000 });
             setQuestion('');
             setAnswer('');
             setSelectedQueryId(null);
@@ -31,7 +31,7 @@ function CustomerQueryTab({ product, user }) {
     const handleQuestionSubmit = (e) => {
         e.preventDefault();
         if (!question) {
-            toast.error('Please enter a question.', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter your question before submitting.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         dispatch(askQuestion({
@@ -43,7 +43,7 @@ function CustomerQueryTab({ product, user }) {
     const handleAnswerSubmit = (e, queryId) => {
         e.preventDefault();
         if (!answer) {
-            toast.error('Please enter an answer.', { position: 'top-center', autoClose: 3000 });
+            toast.error('Please enter your answer before submitting.', { position: 'top-center', autoClose: 3000 });
             return;
         }
         dispatch(answerQuestion({

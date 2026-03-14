@@ -46,7 +46,7 @@ const HotDeals = () => {
                 setHotDeals(deals);
             } catch (error) {
                 console.error("Error fetching hot deals:", error);
-                toast.error(error.message);
+                toast.error("An error occurred while fetching our special offers. Please try again later.");
             }
         };
 

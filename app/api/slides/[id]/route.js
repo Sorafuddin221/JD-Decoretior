@@ -10,10 +10,10 @@ export const DELETE = handleAsyncError(async (request, { params }) => {
   const slide = await Slide.findById(id);
 
   if (!slide) {
-    return NextResponse.json({ success: false, message: 'Slide not found' }, { status: 404 });
+    return NextResponse.json({ success: false, message: 'The requested slide could not be found.' }, { status: 404 });
   }
 
   await slide.deleteOne(); // Use deleteOne() instead of remove()
 
-  return NextResponse.json({ success: true, message: 'Slide deleted successfully' }, { status: 200 });
+  return NextResponse.json({ success: true, message: 'The slide has been successfully deleted.' }, { status: 200 });
 });

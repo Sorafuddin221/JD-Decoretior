@@ -9,7 +9,7 @@ export const POST = handleAsyncError(async (request) => {
   const { imageUrl, buttonUrl } = body;
 
   if (!imageUrl) {
-    return NextResponse.json({ success: false, message: 'Image URL is required' }, { status: 400 });
+    return NextResponse.json({ success: false, message: 'Please provide an image URL.' }, { status: 400 });
   }
 
   const newSlide = new Slide({
@@ -21,7 +21,7 @@ export const POST = handleAsyncError(async (request) => {
   // db.disconnect() is not typically called here in Next.js API routes due to connection caching
   // and potential for multiple requests using the same connection within a short period.
 
-  return NextResponse.json({ success: true, slide: newSlide }, { status: 201 });
+  return NextResponse.json({ success: true, message: 'The slide has been successfully created.', slide: newSlide }, { status: 201 });
 });
 
 export const GET = handleAsyncError(async () => {

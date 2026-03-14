@@ -12,9 +12,9 @@ const AddToCart = ({ product }) => {
   const handleAddToCart = () => {
     if (isAuthenticated) {
       dispatch(addItemsToCart({ id: product._id, quantity: 1 }));
-      toast.success("Added to cart");
+      toast.success("Item successfully added to your cart.");
     } else {
-      toast.error("Please login to your account");
+      toast.error("Please log in to your account to continue.");
     }
   };
 
