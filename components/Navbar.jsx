@@ -649,7 +649,7 @@ const Navbar = ({ settings }) => {
                                         </React.Fragment>
                                     ))}
                                 </div>
-                                <a href="#" className="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i className="fa fa-mobile-alt me-2"></i> {phoneNumber}</a>
+                                <a href="#" className="navbar-contact-button btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i className="fa fa-mobile-alt me-2"></i> {phoneNumber}</a>
                             </div>
                         </div>
                     </div>

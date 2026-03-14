@@ -1,10 +1,17 @@
 import db from '@/lib/db';
 import Slide from '@/models/slideModel';
+import Settings from '@/models/settingsModel';
 
 async function getSlides() {
   await db();
   const slides = await Slide.find({});
   return JSON.parse(JSON.stringify(slides));
+}
+
+async function getSettings() {
+  await db();
+  const settings = await Settings.findOne({});
+  return JSON.parse(JSON.stringify(settings));
 }
 
 import React from 'react';
@@ -17,10 +24,12 @@ import ProductTabs from '@/components/ProductTabs';
 import TrendingProducts from '@/components/TrendingProducts';
 import HomepageOfferAfterTopProducts from '@/components/HomepageOfferAfterTopProducts';
 import SpecialOfferSection from '@/components/SpecialOfferSection';
+import Notice from '@/components/Notice';
 import '@/pageStyles/Home.css';
 
 export default async function Home() {
   const initialSlides = await getSlides();
+  const settings = await getSettings();
 
   return (
     <>
@@ -32,6 +41,7 @@ export default async function Home() {
           <SpecialOfferSection />
         </div>
       </div>
+      <Notice text={settings?.noticeText} show={settings?.showNotice} />
       <Categories />
       <OfferSection />
       <HotDeals />

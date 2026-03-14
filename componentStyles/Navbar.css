@@ -668,6 +668,7 @@
  .navbar-contact-button:hover {
     background-color: #e68a00;
     border-color: #e68a00;
+    color: #fff !important;
 }
 .navbar-contact-button-icon { 
     margin-right: 0.5rem;

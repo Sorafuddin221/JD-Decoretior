@@ -10,6 +10,8 @@ function GeneralSettingsClientComponent() {
   const [textIcon, setTextIcon] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [noticeText, setNoticeText] = useState('');
+  const [showNotice, setShowNotice] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [logoFile, setLogoFile] = useState(null);
@@ -33,6 +35,8 @@ function GeneralSettingsClientComponent() {
             setTextIcon(data.textIcon || '');
             setPhoneNumber(data.phoneNumber || '01516143874');
             setContactEmail(data.contactEmail || 'jibondecoretor@gmail.com');
+            setNoticeText(data.noticeText || '');
+            setShowNotice(data.showNotice || false);
           }
         }
       } catch (error) {
@@ -117,6 +121,8 @@ function GeneralSettingsClientComponent() {
       textIcon,
       phoneNumber,
       contactEmail,
+      noticeText,
+      showNotice,
     };
 
     try {
@@ -221,6 +227,29 @@ function GeneralSettingsClientComponent() {
             onChange={(e) => setContactEmail(e.target.value)}
             placeholder="Enter contact email"
             required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="noticeText">Notice Text:</label>
+          <textarea
+            id="noticeText"
+            value={noticeText}
+            onChange={(e) => setNoticeText(e.target.value)}
+            placeholder="Enter notice text"
+            className="form-control"
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', minHeight: '80px' }}
+          />
+        </div>
+
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <label htmlFor="showNotice" style={{ marginBottom: 0 }}>Show Notice:</label>
+          <input
+            type="checkbox"
+            id="showNotice"
+            checked={showNotice}
+            onChange={(e) => setShowNotice(e.target.checked)}
+            style={{ width: 'auto' }}
           />
         </div>
 

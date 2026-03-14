@@ -20,7 +20,7 @@ export const POST = handleAsyncError(async (req) => {
   }
 
   const body = await req.json();
-  const { siteTitle, siteLogoUrl, siteFaviconUrl, textIcon, phoneNumber, contactEmail } = body;
+  const { siteTitle, siteLogoUrl, siteFaviconUrl, textIcon, phoneNumber, contactEmail, noticeText, showNotice } = body;
 
   await db();
   let settings = await Settings.findOne({});
@@ -33,6 +33,8 @@ export const POST = handleAsyncError(async (req) => {
       textIcon,
       phoneNumber,
       contactEmail,
+      noticeText,
+      showNotice,
     });
   } else {
     settings.siteTitle = siteTitle;
@@ -41,6 +43,8 @@ export const POST = handleAsyncError(async (req) => {
     settings.textIcon = textIcon;
     settings.phoneNumber = phoneNumber;
     settings.contactEmail = contactEmail;
+    settings.noticeText = noticeText;
+    settings.showNotice = showNotice;
   }
 
   const savedSettings = await settings.save();

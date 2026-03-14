@@ -22,6 +22,14 @@ const settingsSchema = new mongoose.Schema({
     type: String,
     default: "jibondecoretor@gmail.com",
   },
+  noticeText: {
+    type: String,
+    default: "",
+  },
+  showNotice: {
+    type: Boolean,
+    default: false,
+  },
 }, { timestamps: true });
 
 export default mongoose.models.Settings || mongoose.model('Settings', settingsSchema);
