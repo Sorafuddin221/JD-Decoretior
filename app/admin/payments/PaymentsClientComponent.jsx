@@ -11,6 +11,10 @@ function PaymentsClientComponent() {
   const [activeDistricts, setActiveDistricts] = useState(["Naogaon"]);
   const [bkashNumber, setBkashNumber] = useState('');
   const [bkashInstructions, setBkashInstructions] = useState('');
+  const [rocketNumber, setRocketNumber] = useState('');
+  const [rocketInstructions, setRocketInstructions] = useState('');
+  const [nagadNumber, setNagadNumber] = useState('');
+  const [nagadInstructions, setNagadInstructions] = useState('');
   const [securityDepositPercentage, setSecurityDepositPercentage] = useState(0);
 
   useEffect(() => {
@@ -27,6 +31,10 @@ function PaymentsClientComponent() {
             setActiveDistricts(data.activeDistricts?.length > 0 ? data.activeDistricts : ["Naogaon"]);
             setBkashNumber(data.bkashNumber || '');
             setBkashInstructions(data.bkashInstructions || '');
+            setRocketNumber(data.rocketNumber || '');
+            setRocketInstructions(data.rocketInstructions || '');
+            setNagadNumber(data.nagadNumber || '');
+            setNagadInstructions(data.nagadInstructions || '');
             setSecurityDepositPercentage(data.securityDepositPercentage || 0);
           }
         }
@@ -69,6 +77,10 @@ function PaymentsClientComponent() {
       activeDistricts,
       bkashNumber,
       bkashInstructions,
+      rocketNumber,
+      rocketInstructions,
+      nagadNumber,
+      nagadInstructions,
       securityDepositPercentage: Number(securityDepositPercentage),
     };
 
@@ -163,6 +175,58 @@ function PaymentsClientComponent() {
               placeholder="Instructions like: Please Send Money to this number..."
               rows="3"
               style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ffadd2', outline: 'none' }}
+            />
+          </div>
+        </div>
+
+        <div className="form-group" style={{ background: '#f9f0ff', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #d3adf7' }}>
+          <h4 style={{ marginBottom: '15px', color: '#722ed1' }}>Rocket Payment Settings</h4>
+          <div style={{ marginBottom: '15px' }}>
+            <label htmlFor="rocketNumber">Rocket Number (Personal/Merchant):</label>
+            <input
+              type="text"
+              id="rocketNumber"
+              value={rocketNumber}
+              onChange={(e) => setRocketNumber(e.target.value)}
+              placeholder="e.g. 017XXXXXXXXX"
+              style={{ border: '1px solid #d3adf7' }}
+            />
+          </div>
+          <div>
+            <label htmlFor="rocketInstructions">Instructions for Customers:</label>
+            <textarea
+              id="rocketInstructions"
+              value={rocketInstructions}
+              onChange={(e) => setRocketInstructions(e.target.value)}
+              placeholder="Instructions like: Please Send Money to this number..."
+              rows="3"
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #d3adf7', outline: 'none' }}
+            />
+          </div>
+        </div>
+
+        <div className="form-group" style={{ background: '#fff2e8', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #ffbb96' }}>
+          <h4 style={{ marginBottom: '15px', color: '#d4380d' }}>Nagad Payment Settings</h4>
+          <div style={{ marginBottom: '15px' }}>
+            <label htmlFor="nagadNumber">Nagad Number (Personal/Merchant):</label>
+            <input
+              type="text"
+              id="nagadNumber"
+              value={nagadNumber}
+              onChange={(e) => setNagadNumber(e.target.value)}
+              placeholder="e.g. 017XXXXXXXX"
+              style={{ border: '1px solid #ffbb96' }}
+            />
+          </div>
+          <div>
+            <label htmlFor="nagadInstructions">Instructions for Customers:</label>
+            <textarea
+              id="nagadInstructions"
+              value={nagadInstructions}
+              onChange={(e) => setNagadInstructions(e.target.value)}
+              placeholder="Instructions like: Please Send Money to this number..."
+              rows="3"
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ffbb96', outline: 'none' }}
             />
           </div>
         </div>

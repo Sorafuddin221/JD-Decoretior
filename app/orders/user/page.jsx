@@ -71,7 +71,7 @@ function MyOrdersPage() {
                                     <td>{order.totalPrice}</td>
                                     <td><Link className='order-link' href={`/order/${order._id}`}><LaunchOutlined /></Link></td>
                                     <td>
-                                        <button onClick={() => handleDelete(order._id)} className='delete-button' disabled={order.orderStatus !== 'processing'}>
+                                        <button onClick={() => handleDelete(order._id)} className='delete-button' disabled={order.orderStatus !== 'Processing'}>
                                             <Delete />
                                         </button>
                                     </td>

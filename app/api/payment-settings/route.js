@@ -6,7 +6,7 @@ import handleAsyncError from '@/middleware/handleAsyncError';
 export const POST = handleAsyncError(async (request) => {
   await db();
   const body = await request.json();
-  const { taxPercentage, shippingZones, freeShippingThreshold, activeDivisions, activeDistricts, bkashNumber, bkashInstructions, securityDepositPercentage } = body;
+  const { taxPercentage, shippingZones, freeShippingThreshold, activeDivisions, activeDistricts, bkashNumber, bkashInstructions, rocketNumber, rocketInstructions, nagadNumber, nagadInstructions, securityDepositPercentage } = body;
 
   let settings = await PaymentSettings.findOne();
 
@@ -19,6 +19,10 @@ export const POST = handleAsyncError(async (request) => {
     settings.activeDistricts = activeDistricts;
     settings.bkashNumber = bkashNumber;
     settings.bkashInstructions = bkashInstructions;
+    settings.rocketNumber = rocketNumber;
+    settings.rocketInstructions = rocketInstructions;
+    settings.nagadNumber = nagadNumber;
+    settings.nagadInstructions = nagadInstructions;
     settings.securityDepositPercentage = securityDepositPercentage;
     await settings.save();
   } else {
@@ -31,6 +35,10 @@ export const POST = handleAsyncError(async (request) => {
       activeDistricts,
       bkashNumber,
       bkashInstructions,
+      rocketNumber,
+      rocketInstructions,
+      nagadNumber,
+      nagadInstructions,
       securityDepositPercentage,
     });
   }

@@ -62,7 +62,7 @@ const orderSchema=new mongoose.Schema({
     orderStatus:{
         type:String,
         required:true,
-        default:'processing'
+        default:'Processing'
     },
     startDate: {
         type: Date,
@@ -98,10 +98,10 @@ const orderSchema=new mongoose.Schema({
                 type: String 
             },
             method: {
-                type: String, // 'bkash', 'cod', etc.
+                type: String, // 'bkash', 'rocket', 'nagad', 'cod', etc.
                 default: 'cod'
             },
-            bkashNumber: {
+            paymentNumber: {
                 type: String
             },
             trxID: {

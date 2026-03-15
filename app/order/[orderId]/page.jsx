@@ -45,7 +45,7 @@ function OrderDetailsPage({ params }) {
     const paidAmount = paymentInfo?.paidAmount || 0;
     const dueAmount = (totalPrice || 0) - (paidAmount || 0);
     const isFullyPaid = paymentInfo?.status === 'Paid' || paymentInfo?.status === 'succeeded';
-    const orderStatusClass = orderStatus === 'delivered' ? 'status-tag delivered' : `status-tag ${orderStatus?.toLowerCase()}`;
+    const orderStatusClass = `status-tag ${orderStatus?.toLowerCase().replace(/[\s\/]+/g, '-')}`;
     const paymentStatusClass = `pay-tag ${isFullyPaid ? 'paid' : (paidAmount > 0 ? 'partial' : 'not-paid')}`;
 
     return (

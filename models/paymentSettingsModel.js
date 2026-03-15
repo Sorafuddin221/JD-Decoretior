@@ -31,6 +31,22 @@ const paymentSettingsSchema = new mongoose.Schema({
     type: String,
     default: "Please Send Money to this number and provide TrxID below."
   },
+  rocketNumber: {
+    type: String,
+    default: "01XXXXXXXXXX"
+  },
+  rocketInstructions: {
+    type: String,
+    default: "Please Send Money to this number and provide TrxID below."
+  },
+  nagadNumber: {
+    type: String,
+    default: "01XXXXXXXXX"
+  },
+  nagadInstructions: {
+    type: String,
+    default: "Please Send Money to this number and provide TrxID below."
+  },
   securityDepositPercentage: {
     type: Number,
     default: 0

@@ -111,7 +111,7 @@ function OrdersListPage() {
                                                 ) : "N/A"}
                                             </td>
                                             <td>{order.totalDays || "N/A"}</td>
-                                            <td className={`order-status ${order.orderStatus.toLowerCase()}`}>{order.orderStatus}</td>
+                                            <td className={`order-status ${order.orderStatus.toLowerCase().replace(/[\s\/]+/g, '-')}`}>{order.orderStatus}</td>
                                             <td>{order.totalPrice.toFixed(2)}/-</td>
                                             <td>{order.orderItems.length}</td>
                                             <td>

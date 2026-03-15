@@ -51,7 +51,7 @@ export const POST = handleAsyncError(async (request) => {
             id: paymentInfo.id,
             status: paymentInfo.status || (paymentInfo.method === 'cod' ? 'Processing' : 'Pending Verification'),
             method: paymentInfo.method || 'cod',
-            bkashNumber: paymentInfo.bkashNumber,
+            paymentNumber: paymentInfo.paymentNumber,
             trxID: paymentInfo.trxID,
             paidAmount: Number(paymentInfo.paidAmount) || 0
         },
@@ -63,7 +63,7 @@ export const POST = handleAsyncError(async (request) => {
         taxPrice: taxPrice || 0,
         shippingPrice: shippingPrice || 0,
         totalPrice: totalPrice || 0,
-        paidAt: paymentInfo.method === 'bkash' ? Date.now() : undefined,
+        paidAt: ['bkash', 'rocket', 'nagad'].includes(paymentInfo.method) ? Date.now() : undefined,
         user: user._id,
     });
 

@@ -19,11 +19,11 @@ function PaymentSuccessClientComponent() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (method === 'cod' || method === 'bkash') {
+        if (['cod', 'bkash', 'rocket', 'nagad'].includes(method)) {
             if (method === 'cod') {
                 toast.success('Your order has been confirmed successfully (Cash on Delivery).', { position: 'top-center', autoClose: 3000 });
             } else {
-                toast.success('Your order has been submitted successfully. bKash payment is currently pending verification.', { position: 'top-center', autoClose: 3000 });
+                toast.success(`Your order has been submitted successfully. ${method.charAt(0).toUpperCase() + method.slice(1)} payment is currently pending verification.`, { position: 'top-center', autoClose: 3000 });
             }
             dispatch(clearCart());
             sessionStorage.removeItem('orderData');

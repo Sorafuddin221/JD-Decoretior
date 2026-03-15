@@ -172,9 +172,9 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus, u
                         <h3 style={{fontSize: '1rem', marginBottom: '10px', color: '#555', borderBottom: '1px solid #eee', paddingBottom: '5px'}}>Payment Verification</h3>
                         <p><strong>Method :</strong> {paymentInfo.method?.toUpperCase() || 'N/A'}</p>
                         <p><strong>Status :</strong> <span style={{color: paymentStatus === 'Paid' ? '#28a745' : '#fd7e14', fontWeight: 'bold'}}>{paymentStatus}</span></p>
-                        {paymentInfo.method === 'bkash' && (
+                        {['bkash', 'rocket', 'nagad'].includes(paymentInfo.method) && (
                             <>
-                                <p><strong>Customer bKash No :</strong> {paymentInfo.bkashNumber || 'N/A'}</p>
+                                <p><strong>Customer {paymentInfo.method?.charAt(0).toUpperCase() + paymentInfo.method?.slice(1)} No :</strong> {paymentInfo.paymentNumber || paymentInfo.bkashNumber || 'N/A'}</p>
                                 <p><strong>Transaction ID :</strong> <span style={{color: '#d12053', fontWeight: 'bold', letterSpacing: '1px'}}>{paymentInfo.trxID || 'N/A'}</span></p>
                             </>
                         )}
@@ -231,13 +231,15 @@ import { getAdminOrderDetails, removeErrors, removeSuccess, updateOrderStatus, u
                 </div>
                 <div className="order-status">
                     <h2>Update Status</h2>
-                    <select disabled={loading || orderStatus === 'Delivered'} name="" id="" className="status-select" value={status} onChange={(e) => setStatus(e.target.value)}>
+                    <select disabled={loading || orderStatus === 'Returned'} name="" id="" className="status-select" value={status} onChange={(e) => setStatus(e.target.value)}>
                         <option value="">Select Status</option>
-                        <option value="Shipped">Shipped</option>
-                        <option value="On The Way">On The Way</option>
-                        <option value="Delivered">Delivered</option>
+                        <option value="Confirmed">Confirmed</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered / Set Up">Delivered / Set Up</option>
+                        <option value="Returned">Returned</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
-                    <button disabled={loading || !status || orderStatus === 'Delivered'} onClick={handleStatusUpdate} className="update-button">Update Status</button>
+                    <button disabled={loading || !status || orderStatus === 'Returned'} onClick={handleStatusUpdate} className="update-button">Update Status</button>
                 </div>
             </div>)}
         </>
