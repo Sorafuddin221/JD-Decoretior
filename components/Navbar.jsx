@@ -4,8 +4,10 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BuildIcon from '@mui/icons-material/Build';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 import CloseIcon from '@mui/icons-material/Close';
 import MenuIcon from '@mui/icons-material/Menu';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -307,8 +309,7 @@ const Navbar = ({ settings }) => {
                             </div>
                             {isClient &&
                                 <div className="topbar-dropdown">
-                                    <a href="#" className="topbar-dropdown-toggle" data-bs-toggle="dropdown"><small className="topbar-dropdown-text"><i
-                                        className="fa fa-home me-2"></i> My Dashboard</small></a>
+                                    <a href="#" className="topbar-dropdown-toggle" data-bs-toggle="dropdown"><small className="topbar-dropdown-text"><HomeIcon sx={{ fontSize: '16px', marginRight: '5px' }} /> My Dashboard</small></a>
                                     <div className="topbar-dropdown-menu">
                                         {isAuthenticated ? (
                                             <>
@@ -418,28 +419,32 @@ const Navbar = ({ settings }) => {
                         <div className="main-header-actions-wrapper">
                             {isClient ? (
                                 isAuthenticated ? (
-                                    <Link href="/profile" className="main-header-action-link profile-link">
+                                    <Link href="/profile" className="main-header-action-link profile-link vertical-action">
                                         <span className="main-header-action-link-icon-wrapper">
                                             <Image
                                                 src={user.avatar.url}
                                                 alt={user.name}
-                                                width={44}
-                                                height={44}
+                                                width={40}
+                                                height={40}
                                                 className="profile-avatar"
                                             />
                                         </span>
                                         <span className="main-header-action-link-text">{user.name}</span>
                                     </Link>
                                 ) : (
-                                    <Link href="/register" className="main-header-action-link">
-                                        <span className="main-header-action-link-icon-wrapper"><PersonAddIcon /></span>
-                                        <span className="main-header-action-link-text">Login/Register</span>
+                                    <Link href="/login" className="main-header-action-link vertical-action">
+                                        <span className="main-header-action-link-icon-wrapper"><PersonIcon /></span>
+                                        <span className="main-header-action-link-text">Profile</span>
                                     </Link>
                                 )
                             ) : (
-                                <div style={{ width: '150px' }} />
+                                <div style={{ width: '60px' }} />
                             )}
-                            <Link href="/cart" className="main-header-action-link">
+                            <Link href="/builder" className="main-header-action-link builder-link vertical-action">
+                                <span className="main-header-action-link-icon-wrapper"><BuildIcon /></span>
+                                <span className="main-header-action-link-text">Builder</span>
+                            </Link>
+                            <Link href="/cart" className="main-header-action-link vertical-action">
                                 <span className={`main-header-action-link-icon-wrapper ${isCartAnimating ? 'cart-icon-shake' : ''}`}>
                                     <ShoppingCartIcon />
                                     {isClient && cartItems.length > 0 && (
@@ -448,6 +453,7 @@ const Navbar = ({ settings }) => {
                                         </span>
                                     )}
                                 </span>
+                                <span className="main-header-action-link-text">Cart</span>
                             </Link>
                         </div>
                     </div>
@@ -479,7 +485,7 @@ const Navbar = ({ settings }) => {
                     {isClient &&
                         <div className="topbar-dropdown" ref={dashboardDropdownRef}>
                             <a href="#" className="topbar-dropdown-toggle" onClick={(e) => { e.preventDefault(); setIsMyDashboardMobileOpen(!isMyDashboardMobileOpen); }}>
-                                <small className="topbar-dropdown-text"><i className="fa fa-home me-2"></i>My Dashboard</small>
+                                <small className="topbar-dropdown-text"><HomeIcon sx={{ fontSize: '16px', marginRight: '5px' }} />My Dashboard</small>
                             </a>
                             <div className={`mobile-topbar-collapsible-menu ${isMyDashboardMobileOpen ? 'open' : ''}`}>
                                 {isAuthenticated ? (
@@ -594,6 +600,7 @@ const Navbar = ({ settings }) => {
                                 </div>
                             ) : (
                                 <div className="mobile-nav-icons-container">
+                                    <Link href="/builder" className="nav-link"><span className="mobile-nav-icon"><BuildIcon /></span></Link>
                                     <a href="#" className="nav-link" onClick={toggleMobileSearch}><span className="mobile-nav-icon"><SearchIcon /></span></a>
                                     <Link href="/cart" className="nav-link">
                                         <span className="mobile-nav-cart-icon-wrapper mobile-nav-icon">
@@ -623,7 +630,7 @@ const Navbar = ({ settings }) => {
                                 </div>
                             )}
                             <button ref={mobileMenuButtonRef} className="navbar-main-links-toggler" type="button" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                                {isMobileMenuOpen ? <CloseIcon /> : <span className="fa fa-bars fa-1x"></span>}
+                                {isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
                             </button>
                             <div ref={mobileMenuRef} className={`navbar-main-links-collapse ${isMobileMenuOpen ? 'open' : ''}`}>
                                 <div className="navbar-nav py-0 flex-col lg:flex-row">
@@ -649,7 +656,7 @@ const Navbar = ({ settings }) => {
                                         </React.Fragment>
                                     ))}
                                 </div>
-                                <a href="#" className="navbar-contact-button btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i className="fa fa-mobile-alt me-2"></i> {phoneNumber}</a>
+                                <a href="#" className="navbar-contact-button btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><PhoneIcon sx={{ marginRight: '5px' }} /> {phoneNumber}</a>
                             </div>
                         </div>
                     </div>

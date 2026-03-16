@@ -6,6 +6,7 @@ import orderReducer from "../features/order/orderSlice";
 import adminReducer from "../features/admin/adminSlice";
 import categoryReducer from "../features/category/categorySlice";
 import chatReducer from "../features/chat/chatSlice";
+import builderReducer from "../features/builder/builderSlice";
 
 
 export const store=configureStore({
@@ -16,6 +17,7 @@ export const store=configureStore({
         order:orderReducer,
         admin:adminReducer,
         category: categoryReducer,
-        chat: chatReducer
+        chat: chatReducer,
+        builder: builderReducer
     }
 })

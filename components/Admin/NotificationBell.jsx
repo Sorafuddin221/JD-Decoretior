@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api from '@/utils/api';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import './NotificationBell.css'; 
 
 const NotificationBell = () => {
@@ -51,7 +52,7 @@ const NotificationBell = () => {
     return (
         <div className="notification-bell">
             <button onClick={toggleDropdown} className="bell-button">
-                <i className="fa fa-bell"></i>
+                <NotificationsIcon />
                 {notifications.length > 0 && <span className="notification-count">{notifications.length}</span>}
             </button>
             {isOpen && (

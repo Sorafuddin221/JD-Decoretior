@@ -4,12 +4,15 @@ import Product from '@/models/productModel';
 import Category from '@/models/categoryModel';
 import Order from '@/models/orderModel';
 import APIFunctionality from '@/utils/apiFunctionality';
-// import HandleError from '@/utils/handleError'; // Not used, can be removed
+import { getAvailableStock } from '@/utils/availability';
 
 export async function GET(req) {
     await connectMongoDatabase();
     const { searchParams } = new URL(req.url);
     let queryStr = Object.fromEntries(searchParams.entries());
+
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
     const discountParam = searchParams.get('discount');
     const typeParam = searchParams.get('type'); // New: Get 'type' parameter

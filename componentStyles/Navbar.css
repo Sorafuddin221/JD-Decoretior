@@ -407,6 +407,51 @@
 .main-header-actions-wrapper {
     display: inline-flex;
     align-items: center;
+    gap: 1.5rem;
+}
+
+.main-header-action-link.vertical-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0;
+    text-align: center;
+    gap: 4px;
+}
+
+.main-header-action-link.vertical-action .main-header-action-link-icon-wrapper {
+    margin-bottom: 0;
+    width: 40px;
+    height: 40px;
+}
+
+.main-header-action-link.vertical-action .main-header-action-link-text {
+    margin-left: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.main-header-action-link.builder-link.vertical-action {
+    background: transparent;
+    color: #6c757d;
+    padding: 0;
+}
+
+.main-header-action-link.builder-link.vertical-action:hover .main-header-action-link-text {
+    color: #f28b00;
+}
+
+.main-header-action-link.builder-link.vertical-action .main-header-action-link-icon-wrapper {
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.main-header-action-link.builder-link.vertical-action:hover .main-header-action-link-icon-wrapper {
+    background: #f28b00;
+    border-color: #f28b00;
+    color: white;
 }
 
 .main-header-action-link {
@@ -868,7 +913,8 @@
 }
 
 .mobile-nav-icons .nav-link svg,
-.mobile-nav-icon svg {
+.mobile-nav-icon svg,
+.mobile-nav-icon i {
     color: white;
     font-size: 1.25rem;
     vertical-align: middle;
