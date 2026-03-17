@@ -10,6 +10,7 @@ import '@/componentStyles/ChatBox.css';
 const ChatBox = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messageInput, setMessageInput] = useState('');
+    const [mounted, setMounted] = useState(false);
     const { user, isAuthenticated } = useSelector((state) => state.user);
     const { messages } = useSelector((state) => state.chat);
     const dispatch = useDispatch();
@@ -17,6 +18,10 @@ const ChatBox = () => {
 
     // Hardcoded Admin ID for demo - you should ideally fetch this or use a fixed one
     const ADMIN_ID = '67cc32644268e0d5a3746c18'; // Replace with a real admin ID from your DB
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated && user && isOpen) {
@@ -80,7 +85,11 @@ const ChatBox = () => {
                         {messages.map((msg, index) => (
                             <div key={index} className={`message ${msg.isAdmin ? 'admin' : 'user'}`}>
                                 <div className="message-content">{msg.message}</div>
-                                <span className="message-time">{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                {mounted && (
+                                    <span className="message-time">
+                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                )}
                             </div>
                         ))}
                         <div ref={chatEndRef} />

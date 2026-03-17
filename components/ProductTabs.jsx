@@ -64,7 +64,7 @@ const ProductTabs = () => {
                     className={`tab-btn ${activeTab === 'top-selling' ? 'active' : ''}`}
                     onClick={() => setActiveTab('top-selling')}
                 >
-                    Top Selling
+                    Popular Decor
                 </button>
                 <button
                     className={`tab-btn ${activeTab === 'offer' ? 'active' : ''}`}
